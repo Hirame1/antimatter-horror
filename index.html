@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>反物質の深淵 / Into the Antimatter Abyss — COSMIC HORROR</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&family=Cinzel:wght@400;700&display=swap');
+
+:root{
+  --void:#00000a;
+  --am:#6600cc;--amb:#aa44ff;--amp:#cc88ff33;
+  --d1:#ff6600;--d2:#ffaa00;--d3:#aaff44;--d4:#44ffdd;
+  --d5:#4488ff;--d6:#aa44ff;--d7:#ff44aa;--d8:#ffffff;
+  --inf:#ffffaa;--eter:#44ffbb;--real:#ff6644;--cel:#ffcc44;
+  --loop:#ff8833; /* ARC V epilogue: same warm orange as first dimension, the circle */
+  --id1:#ff6622;--id2:#aa4400;--id3:#ff2244;--id4:#ff66aa;
+  --id5:#aa00ff;--id6:#4400ff;--id7:#0044ff;--id8:#00aaff;
+  --tx:#c8c0e0;--txd:#7060a0;--txb:#f0e8ff;
+  --red:#ff2244;
+  --tab-h:56px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;max-width:100%;overflow-x:hidden;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--void);color:var(--tx);
+  font-family:'Noto Serif JP',serif;font-weight:300;
+  line-height:1.9;cursor:crosshair;
+  padding-bottom:calc(var(--tab-h) + 20px);
+}
+body.lang-en{font-family:'EB Garamond',Georgia,serif;font-size:17px;line-height:1.85;}
+
+/* ── LANG VISIBILITY ── */
+.t-ja,.t-en{display:none;}
+body.lang-ja .t-ja{display:block;}
+body.lang-en .t-en{display:block;}
+span.t-ja,span.t-en{display:none;}
+body.lang-ja span.t-ja{display:inline;}
+body.lang-en span.t-en{display:inline;}
+
+/* ── SETTINGS GEAR BUTTON ── */
+#settings-btn{
+  position:fixed;top:12px;right:12px;z-index:510;
+  width:40px;height:40px;
+  border-radius:50%;
+  border:1px solid var(--am);
+  background:rgba(4,0,20,.88);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 14px #6600cc44;
+  color:var(--txd);
+  font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:color .2s,box-shadow .2s,transform .4s;
+}
+#settings-btn:hover{color:var(--amb);box-shadow:0 0 22px #6600cc88;}
+#settings-btn.is-open{
+  color:var(--amb);
+  transform:rotate(60deg);
+  box-shadow:0 0 22px #6600cc88;
+}
+
+/* ── SETTINGS PANEL ── */
+#settings-panel{
+  position:fixed;top:60px;right:10px;z-index:509;
+  width:192px;
+  background:rgba(4,0,20,.95);
+  border:1px solid var(--am);
+  border-radius:6px;
+  box-shadow:0 0 24px #6600cc44;
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  padding:14px 14px 12px;
+  opacity:0;
+  transform:translateY(-8px) scale(.97);
+  pointer-events:none;
+  transition:opacity .2s ease,transform .2s ease;
+}
+#settings-panel.is-open{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.sp-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:.3em;
+  color:var(--txd);opacity:.5;
+  margin-bottom:7px;
+  text-transform:uppercase;
+}
+.sp-sep{height:1px;background:#6600cc33;margin:12px 0;}
+.sp-row{display:flex;gap:6px;}
+.sp-btn{
+  flex:1;
+  padding:9px 4px;
+  border:1px solid #6600cc55;
+  border-radius:3px;
+  background:transparent;
+  color:var(--txd);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;letter-spacing:.1em;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:background .2s,color .2s,border-color .2s,text-shadow .2s;
+  line-height:1;
+}
+.sp-btn:hover{background:#6600cc20;color:var(--tx);}
+.sp-btn.is-active{
+  border-color:var(--amb);
+  background:#6600cc33;
+  color:var(--amb);
+  text-shadow:0 0 8px var(--amb);
+}
+
+/* backdrop — catches outside taps to close panel */
+#settings-backdrop{
+  display:none;
+  position:fixed;inset:0;z-index:508;
+}
+#settings-backdrop.is-open{display:block;}
+
+/* ── ARC 5 TAB UNLOCK ANIMATION ── */
+@keyframes ep5hint{0%,100%{opacity:.4;}50%{opacity:1;}}
+
+/* ARC 5 tab: persistent glow pulse after unlock */
+.tab-btn.arc5-glow{
+  animation:arc5Pulse 2.8s ease-in-out infinite;
+}
+@keyframes arc5Pulse{
+  0%,100%{
+    background:transparent;
+    box-shadow:none;
+  }
+  50%{
+    background:rgba(255,136,51,.12);
+    box-shadow:inset 0 0 14px rgba(255,136,51,.18), 0 0 12px rgba(255,136,51,.25);
+  }
+}
+/* top accent line inherits --ta but also gets the glow */
+.tab-btn.arc5-glow::before{
+  animation:arc5Line 2.8s ease-in-out infinite;
+}
+@keyframes arc5Line{
+  0%,100%{box-shadow:none;opacity:.6;}
+  50%{box-shadow:0 0 14px var(--loop);opacity:1;}
+}
+body.fs-sm .prose{font-size:clamp(12px,3.2vw,14px);}
+body.lang-en.fs-sm .prose{font-size:clamp(13px,3.2vw,15px);}
+/* fs-md = default, already defined in .prose */
+body.fs-lg .prose{font-size:clamp(17px,4.4vw,20px);}
+body.lang-en.fs-lg .prose{font-size:clamp(18px,4.4vw,21px);}
+
+/* ── PROGRESS BAR ── */
+#prog-wrap{position:fixed;top:0;left:0;right:0;z-index:450;height:2px;background:#08021a;}
+#prog-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--am),var(--amb),var(--arc-color,var(--inf)));box-shadow:0 0 6px var(--amb);transition:width .3s;}
+
+/* ── STARFIELD / OVERLAYS ── */
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none;}
+#dim-numbers{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.fnum{position:absolute;font-family:'Share Tech Mono',monospace;font-size:clamp(7px,.9vw,12px);opacity:0;animation:fnUp var(--dur,20s) var(--del,0s) linear infinite;color:var(--col,#6600cc44);white-space:nowrap;text-shadow:0 0 8px currentColor;}
+@keyframes fnUp{0%{transform:translateY(110vh) translateX(var(--sx,0));opacity:0;}5%{opacity:1;}95%{opacity:.6;}100%{transform:translateY(-10vh) translateX(var(--ex,0));opacity:0;}}
+body::after{content:'';position:fixed;inset:0;z-index:5;background:radial-gradient(ellipse at center,transparent 50%,#00000a 100%);pointer-events:none;}
+body::before{content:'';position:fixed;inset:0;z-index:6;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;}
+
+/* ── BOTTOM TAB BAR ── */
+#tab-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:400;
+  height:var(--tab-h);display:flex;align-items:stretch;
+  background:rgba(2,0,14,.96);border-top:1px solid #1a0a3a;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  border:none;background:transparent;cursor:pointer;position:relative;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;min-width:0;overflow:hidden;
+}
+.tab-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background .3s,box-shadow .3s;}
+.tab-btn.is-active::before{background:var(--ta,var(--amb));box-shadow:0 0 10px var(--ta,var(--amb));}
+.tab-btn.is-active .tab-label{color:var(--ta,var(--amb));text-shadow:0 0 8px var(--ta,var(--amb));}
+.tab-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--txd);transition:color .25s;white-space:nowrap;}
+.tab-arc{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:.08em;color:var(--txd);opacity:.45;white-space:nowrap;}
+.tab-btn.is-active .tab-arc{opacity:.85;}
+.tab-btn+.tab-btn{border-left:1px solid #1a0a3a;}
+
+/* ── ARC PANELS ── */
+.arc-panel{display:none;position:relative;z-index:10;width:100%;max-width:740px;margin:0 auto;padding:36px 20px 72px;animation:panIn .45s ease forwards;}
+.arc-panel.is-active{display:block;}
+@keyframes panIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+/* ── SCROLL PROMPT ── */
+/* scroll-prompt removed */
+
+/* ── TITLE BLOCKS ── */
+.title-block{text-align:center;padding:72px 0 48px;opacity:0;animation:titleIn 3s .4s forwards;}
+@keyframes titleIn{from{opacity:0;transform:translateY(28px);filter:blur(8px);}to{opacity:1;transform:none;filter:none;}}
+.arc-title-block{text-align:center;padding:72px 0 48px;}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.4em;text-transform:uppercase;margin-bottom:18px;}
+.ey-inf{color:var(--amb);text-shadow:0 0 20px #6600cc44;}
+.ey-eter{color:var(--eter);text-shadow:0 0 20px #44ffbb44;}
+.ey-real{color:var(--real);text-shadow:0 0 20px #ff664444;}
+.ey-cel{color:var(--cel);text-shadow:0 0 20px #ffcc4444;}
+h1,h2.ah{
+  font-family:'Cinzel',serif;font-weight:700;
+  font-size:clamp(22px,5.5vw,48px);line-height:1.2;
+  letter-spacing:.04em;margin-bottom:12px;
+}
+/* ARC I: bright white with violet glow */
+h1{color:#f0e8ff;text-shadow:0 0 28px var(--amb),0 0 56px #6600cc55;}
+/* ARC II: mint white with teal glow */
+h2.ah.ah-eter{color:#ccfff4;text-shadow:0 0 28px var(--eter),0 0 56px #44ffbb44;}
+/* ARC III: warm cream with coral glow */
+h2.ah.ah-real{color:#ffe8d8;text-shadow:0 0 28px var(--real),0 0 56px #ff664444;}
+/* ARC IV: gold-white with amber glow */
+h2.ah.ah-cel{color:#fff8cc;text-shadow:0 0 28px var(--cel),0 0 56px #ffcc4444;}
+.tsub{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--txd);letter-spacing:.2em;margin-top:14px;}
+.tdiv{width:1px;height:60px;margin:28px auto 0;position:relative;}
+.tdiv.td-inf{background:linear-gradient(to bottom,transparent,var(--am),transparent);}
+.tdiv.td-eter{background:linear-gradient(to bottom,transparent,var(--eter),transparent);}
+.tdiv.td-real{background:linear-gradient(to bottom,transparent,var(--real),transparent);}
+.tdiv.td-cel{background:linear-gradient(to bottom,transparent,var(--cel),transparent);}
+.tdiv::after{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;}
+.tdiv.td-inf::after{content:'✦';color:var(--amb);text-shadow:0 0 12px var(--amb);animation:pulse 3s ease-in-out infinite;}
+.tdiv.td-eter::after{content:'⟳';color:var(--eter);text-shadow:0 0 12px var(--eter);animation:rotslow 8s linear infinite;}
+.tdiv.td-real::after{content:'◈';color:var(--real);text-shadow:0 0 12px var(--real);animation:pulse 4s ease-in-out infinite;}
+.tdiv.td-cel::after{content:'★';color:var(--cel);text-shadow:0 0 12px var(--cel);animation:pulse 5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(.9);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.2);}}
+@keyframes rotslow{to{transform:translate(-50%,-50%) rotate(360deg);}}
+
+/* ── CHAPTER ── */
+.chapter{opacity:0;transform:translateY(36px);transition:opacity .8s,transform .8s;}
+.chapter.vis{opacity:1;transform:none;}
+.ch-head{display:flex;align-items:center;gap:14px;margin-bottom:32px;padding-top:52px;flex-wrap:nowrap;}
+.ch-num{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.3em;color:#9080b8;white-space:nowrap;flex-shrink:0;}
+.ch-line{flex:1;height:1px;min-width:0;}
+.cl-inf{background:linear-gradient(90deg,var(--am)44,transparent);}
+.cl-eter{background:linear-gradient(90deg,var(--eter)44,transparent);}
+.cl-real{background:linear-gradient(90deg,var(--real)44,transparent);}
+.cl-cel{background:linear-gradient(90deg,var(--cel)44,transparent);}
+.ch-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 9px;border:1px solid currentColor;border-radius:2px;letter-spacing:.1em;text-shadow:0 0 8px currentColor;box-shadow:0 0 10px currentColor22;white-space:nowrap;flex-shrink:0;max-width:44vw;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── PROSE ── */
+.prose{margin-bottom:26px;font-size:clamp(14px,3.8vw,16.5px);color:var(--tx);letter-spacing:.02em;word-break:break-word;overflow-wrap:break-word;}
+body.lang-en .prose{font-size:clamp(15px,3.8vw,17.5px);letter-spacing:.01em;}
+.prose.in{text-indent:2em;}
+body.lang-en .prose.in{text-indent:0;}
+
+/* ── CALLOUT ── */
+.co{margin:32px 0;padding:16px 20px;border-left:2px solid var(--am);background:linear-gradient(135deg,var(--amp),transparent);border-radius:0 4px 4px 0;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--amb);text-shadow:0 0 8px var(--am);letter-spacing:.04em;line-height:1.75;word-break:break-word;overflow-wrap:break-word;}
+.co.ter{border-left-color:var(--red);background:linear-gradient(135deg,#ff224420,transparent);color:#ff8899;text-shadow:0 0 8px var(--red);}
+.co.inf{border-left-color:var(--inf);background:linear-gradient(135deg,#ffffaa20,transparent);color:var(--inf);text-shadow:0 0 8px var(--inf);}
+.co.eter{border-left-color:var(--eter);background:linear-gradient(135deg,#44ffbb15,transparent);color:var(--eter);text-shadow:0 0 8px var(--eter);}
+.co.real{border-left-color:var(--real);background:linear-gradient(135deg,#ff664415,transparent);color:#ffaa88;text-shadow:0 0 8px var(--real);}
+.co.cel{border-left-color:var(--cel);background:linear-gradient(135deg,#ffcc4415,transparent);color:var(--cel);text-shadow:0 0 8px var(--cel);}
+
+/* ── DIM GRID ── */
+.dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:28px 0;font-family:'Share Tech Mono',monospace;}
+.dc{border:1px solid currentColor;padding:7px 5px;text-align:center;font-size:10px;opacity:.5;transition:opacity .5s,box-shadow .5s;border-radius:2px;}
+.dc.on{opacity:1;box-shadow:0 0 10px currentColor44;}
+.dc .dn{font-size:8px;letter-spacing:.15em;margin-bottom:3px;opacity:.6;}
+.dc .dv{font-size:12px;}
+
+/* ── EMPHASIS ── */
+em.h{font-style:normal;color:var(--red);text-shadow:0 0 6px var(--red);}
+em.v{font-style:normal;color:var(--amb);text-shadow:0 0 8px var(--am);font-family:'Cinzel',serif;}
+em.i{font-style:normal;color:var(--inf);text-shadow:0 0 10px var(--inf);font-family:'Cinzel',serif;}
+em.e{font-style:normal;color:var(--eter);text-shadow:0 0 10px var(--eter);font-family:'Cinzel',serif;}
+em.r{font-style:normal;color:var(--real);text-shadow:0 0 10px var(--real);font-family:'Cinzel',serif;}
+em.c{font-style:normal;color:var(--cel);text-shadow:0 0 10px var(--cel);font-family:'Cinzel',serif;}
+
+/* ── SEP ── */
+.sep{text-align:center;color:var(--txd);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.5em;margin:44px 0;opacity:.45;}
+
+/* ── REVEAL SYMBOLS ── */
+.rev{text-align:center;padding:60px 0;position:relative;overflow:hidden;}
+.rsym{font-family:'Cinzel',serif;display:block;line-height:1;}
+
+/* ∞ — bright yellow-white with infinity glow */
+#sym-inf{
+  font-size:clamp(70px,18vw,160px);
+  color:#fffbe8;
+  animation:gi 3s ease-in-out infinite;
+}
+@keyframes gi{
+  0%,100%{text-shadow:0 0 20px var(--inf),0 0 50px var(--inf),0 0 90px var(--am);}
+  50%{text-shadow:0 0 36px #fff,0 0 70px var(--inf),0 0 120px var(--am);}
+}
+
+/* ETERNITY — mint white with teal glow */
+#sym-eter{
+  font-size:clamp(44px,11vw,120px);
+  color:#e0fff8;
+  letter-spacing:.08em;
+  animation:ge 4s ease-in-out infinite;
+}
+@keyframes ge{
+  0%,100%{text-shadow:0 0 18px var(--eter),0 0 50px var(--eter),0 0 80px #44aaff66;}
+  50%{text-shadow:0 0 32px #fff,0 0 64px var(--eter),0 0 110px #44aaff88;}
+}
+.eter-ring{position:absolute;top:50%;left:50%;width:240px;height:240px;margin:-120px;border-radius:50%;border:1px solid #44ffbb30;animation:ringx 4s ease-out infinite;pointer-events:none;}
+.eter-ring:nth-child(2){animation-delay:1.3s;}.eter-ring:nth-child(3){animation-delay:2.6s;}
+@keyframes ringx{0%{transform:scale(.3);opacity:.8;}100%{transform:scale(2.2);opacity:0;}}
+
+/* REALITY — warm cream with coral glow */
+#sym-real{
+  font-size:clamp(44px,11vw,110px);
+  color:#fff0e8;
+  letter-spacing:.12em;
+  animation:gr 3.5s ease-in-out infinite;
+}
+@keyframes gr{
+  0%,100%{text-shadow:0 0 16px var(--real),0 0 44px var(--real),0 0 80px #ffaa4455;}
+  50%{text-shadow:0 0 30px #fff,0 0 60px var(--real),0 0 110px #ffaa4488;}
+}
+.shard{position:absolute;background:linear-gradient(to right,transparent,var(--real)44,transparent);height:1px;pointer-events:none;animation:sf 5s ease-in-out infinite;}
+@keyframes sf{0%,100%{opacity:0;}50%{opacity:.8;}}
+
+/* CELESTIAL — gold white with amber glow */
+#sym-cel{
+  font-size:clamp(44px,11vw,110px);
+  color:#fffae0;
+  letter-spacing:.1em;
+  animation:gc 4s ease-in-out infinite;
+}
+@keyframes gc{
+  0%,100%{text-shadow:0 0 20px var(--cel),0 0 50px var(--cel),0 0 90px #ffcc4466;}
+  50%{text-shadow:0 0 36px #fff,0 0 70px var(--cel),0 0 120px #ffcc4499;}
+}
+
+/* ── RESOURCE BAR ── */
+.rbar{display:flex;gap:10px;margin:28px 0;font-family:'Share Tech Mono',monospace;}
+.ritem{flex:1;padding:11px 14px;border:1px solid currentColor;border-radius:2px;min-width:0;}
+.ritem .rl{font-size:8px;letter-spacing:.2em;opacity:.55;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ritem .rv{font-size:16px;text-shadow:0 0 8px currentColor;}
+
+/* ── GLYPH GRID ── */
+.ggrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:28px 0;font-family:'Share Tech Mono',monospace;}
+.gcell{aspect-ratio:1;border:1px solid #ff664444;border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;color:var(--real);text-shadow:0 0 8px var(--real);opacity:.35;transition:opacity .5s,box-shadow .5s;}
+.gcell.on{opacity:1;box-shadow:0 0 12px var(--real)44;}
+.gcell .gn{font-size:6px;letter-spacing:.1em;color:var(--txd);margin-top:3px;}
+
+/* ── CELESTIAL GRID ── */
+.cegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:28px 0;}
+.cecell{padding:14px 16px;border:1px solid currentColor;border-radius:3px;font-family:'Share Tech Mono',monospace;opacity:.45;transition:opacity .4s,box-shadow .4s;}
+.cecell.on{opacity:1;box-shadow:0 0 14px currentColor33;}
+.cecell .cn{font-size:10px;letter-spacing:.2em;margin-bottom:6px;}
+.cecell .cs{font-size:11px;opacity:.65;line-height:1.55;}
+
+/* ── PERK TREE ── */
+.perk-row{display:flex;gap:8px;margin:6px 0;flex-wrap:wrap;}
+.perk{padding:5px 11px;border:1px solid var(--real)55;border-radius:12px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--txd);letter-spacing:.1em;transition:all .4s;}
+.perk.on{border-color:var(--real);color:var(--real);text-shadow:0 0 8px var(--real);box-shadow:0 0 10px var(--real)33;}
+.perk-wrap{margin:28px 0;}
+.perk-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.2em;margin-bottom:10px;opacity:.6;}
+
+/* ── BLACK HOLE ── */
+.bhole-wrap{text-align:center;margin:36px 0;position:relative;}
+.bhole{
+  width:clamp(100px,25vw,180px);height:clamp(100px,25vw,180px);
+  margin:0 auto;border-radius:50%;
+  background:radial-gradient(ellipse,#000 0%,#0a0020 40%,var(--real)22 70%,transparent 100%);
+  box-shadow:0 0 40px var(--real)44, 0 0 80px var(--real)22, inset 0 0 30px #000;
+  animation:bhpulse 4s ease-in-out infinite;
+  position:relative;overflow:visible;
+}
+.bhole::before{
+  content:'';position:absolute;inset:-16px;border-radius:50%;
+  border:1px solid var(--real)33;
+  animation:bhring 3s linear infinite;
+}
+.bhole::after{
+  content:'';position:absolute;inset:-32px;border-radius:50%;
+  border:1px solid var(--real)18;
+  animation:bhring 6s linear infinite reverse;
+}
+@keyframes bhpulse{0%,100%{box-shadow:0 0 40px var(--real)44,0 0 80px var(--real)22,inset 0 0 30px #000;}50%{box-shadow:0 0 60px var(--real)66,0 0 120px var(--real)33,inset 0 0 50px #000;}}
+@keyframes bhring{to{transform:rotate(360deg);}}
+.bhole-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--real);letter-spacing:.25em;margin-top:20px;text-shadow:0 0 8px var(--real);}
+
+/* ── EPILOGUE ── */
+.epi{margin-top:68px;padding:48px 0;text-align:center;}
+.epi.ei{border-top:1px solid var(--am)44;}
+.epi.ee{border-top:1px solid var(--eter)44;}
+.epi.er{border-top:1px solid var(--real)44;}
+.epi.ec{border-top:1px solid var(--cel)44;}
+.epi-q{font-family:'Cinzel',serif;font-size:clamp(13px,3.5vw,19px);color:var(--txb);line-height:1.85;letter-spacing:.07em;margin-bottom:26px;}
+.epi-cr{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.28em;line-height:2;}
+.enxt{text-shadow:0 0 8px currentColor;}
+
+/* ── COLOR SHORTCUTS ── */
+[data-d="1"]{color:var(--d1)}[data-d="2"]{color:var(--d2)}[data-d="3"]{color:var(--d3)}[data-d="4"]{color:var(--d4)}
+[data-d="5"]{color:var(--d5)}[data-d="6"]{color:var(--d6)}[data-d="7"]{color:var(--d7)}[data-d="8"]{color:var(--d8)}
+[data-id="1"]{color:var(--id1)}[data-id="2"]{color:var(--id2)}[data-id="3"]{color:var(--id3)}[data-id="4"]{color:var(--id4)}
+[data-id="5"]{color:var(--id5)}[data-id="6"]{color:var(--id6)}[data-id="7"]{color:var(--id7)}[data-id="8"]{color:var(--id8)}
+
+@media(max-width:480px){
+  .dgrid{grid-template-columns:repeat(2,1fr);}
+  .ggrid{grid-template-columns:repeat(4,1fr);}
+  .cegrid{grid-template-columns:1fr;}
+  .rbar{flex-direction:column;}
+  .arc-panel{padding:28px 14px 56px;}
+}
+</style>
+</head>
+<body class="lang-en">
+
+<canvas id="starfield"></canvas>
+<div id="dim-numbers"></div>
+<div id="prog-wrap"><div id="prog-bar"></div></div>
+
+<!-- SETTINGS GEAR BUTTON + PANEL -->
+<button id="settings-btn" type="button" aria-label="設定 / Settings" aria-expanded="false">⚙</button>
+
+<div id="settings-backdrop" aria-hidden="true"></div>
+
+<div id="settings-panel" role="dialog" aria-label="設定パネル" aria-hidden="true">
+  <div class="sp-label"><span class="t-ja">言語</span><span class="t-en">LANGUAGE</span></div>
+  <div class="sp-row">
+    <button class="sp-btn" id="btn-ja" type="button">日本語</button>
+    <button class="sp-btn is-active" id="btn-en" type="button">ENGLISH</button>
+  </div>
+  <div class="sp-sep"></div>
+  <div class="sp-label"><span class="t-ja">文字サイズ</span><span class="t-en">FONT SIZE</span></div>
+  <div class="sp-row">
+    <button class="sp-btn" id="fs-sm" type="button" style="font-size:9px"><span class="t-ja">小</span><span class="t-en">S</span></button>
+    <button class="sp-btn is-active" id="fs-md" type="button" style="font-size:11px"><span class="t-ja">中</span><span class="t-en">M</span></button>
+    <button class="sp-btn" id="fs-lg" type="button" style="font-size:13px"><span class="t-ja">大</span><span class="t-en">L</span></button>
+  </div>
+</div>
+
+
+
+<!-- ══════════════════════════════════════════
+     ARC 1: FIRST INFINITY
+══════════════════════════════════════════ -->
+<div class="arc-panel is-active" id="arc1">
+  <div class="title-block">
+    <p class="eyebrow ey-inf">ANTIMATTER DIMENSIONS — COSMIC HORROR</p>
+    <h1 class="t-ja">反物質の深淵へ</h1>
+    <h1 class="t-en">Into the Antimatter Abyss</h1>
+    <p class="tsub"><span class="t-ja">第一部：最初の無限</span><span class="t-en">ARC I — FIRST INFINITY</span></p>
+    <div class="tdiv td-inf"></div>
+  </div>
+
+  <!-- CH.00 -->
+  <div class="chapter" id="a1c0">
+    <div class="ch-head"><span class="ch-num">CH.00</span><div class="ch-line cl-inf"></div><span class="ch-badge" data-d="1">FIRST DIMENSION</span></div>
+    <div class="prose in t-ja">はじめ、それは数字だった。</div>
+    <div class="prose t-en">In the beginning, it was just a number.</div>
+    <div class="prose in t-ja">画面の片隅に現れた、ちいさな光の点。<em class="v">反物質</em>と呼ばれるそれは、一秒に一つ、増えていった。まるで心臓の拍動のように。あるいは、宇宙の奥深くで何かが目覚めかけているように。施設の誰も、それを深刻には受け止めなかった。世界中の研究機関が反陽子の精製技術を競っていた時代のことだ。</div>
+    <div class="prose t-en">A small point of light appeared in the corner of a screen. They called it <em class="v">antimatter</em> — and it grew, one unit per second, steady and mechanical, like a heartbeat. Or perhaps like something at the far edge of the universe just beginning to stir. Nobody at the facility took it seriously. The world's research institutions were locked in fierce competition over antiproton refinement.</div>
+    <div class="prose in t-ja">三島遥は、その日の朝、紙コップのコーヒーを手に、モニターの前に座っていた。粒子加速器の最終調整が終わり、午前八時三十二分、第一次元の活性化が確認された。上司が「いいぞ」と言った。隣の同僚が拍手した。三島は数値を見ながら、何かが喉に引っかかるような感覚を覚えた。うまく言葉にならない、かすかな違和感。コーヒーが冷めきっても、その感覚は消えなかった。</div>
+    <div class="prose t-en">That morning, Haruka Mishima sat before her monitor with a paper cup of coffee, watching the final calibration complete. At 8:32 AM, activation of the First Dimension was confirmed. Her supervisor said "good." Her colleague clapped. Mishima stared at the readout and felt something catch in her throat — a vague, nameless wrongness she couldn't articulate. Even after her coffee went cold, the feeling didn't leave.</div>
+    <div class="prose in t-ja">粒子加速器の理論は単純だった。宇宙には、私たちが認識できる「通常の次元」以外に、より深い構造層が存在する。その中で最も基底にある<em class="v">第一次元</em>は、ちょうど静水の水面のように、絶えず微細な揺らぎを繰り返している。加速器の役割は、その揺らぎを利用して反物質を「すくい取る」こと。漁師が網を深海に下ろすように、私たちは宇宙の最底層に手を伸ばした。その先に何が待っているかを考えずに。</div>
+    <div class="prose t-en">The theory behind the accelerator was straightforward. Beyond the dimensions we perceive, the universe contains deeper structural layers. The deepest — the <em class="v">First Dimension</em> — perpetually oscillates in microscopic fluctuations, like the surface of still water. The accelerator's role was to scoop antimatter from those fluctuations. Like a fisherman lowering a net into the deep sea, they reached to the very bottom of the universe. Without considering what might be waiting there.</div>
+    <div class="co t-ja">[SYSTEM LOG — 起動シーケンス完了]<br>日時: XXXX.XX.XX 08:32:17<br>反物質: 1 &nbsp;|&nbsp; 第一次元: ×1 稼働中<br>生産速度: 1.000 /秒<br>時空歪み係数: 0.0000000003<br>状態: <em style="color:#88ff88">正常</em></div>
+    <div class="co t-en">[SYSTEM LOG — BOOT SEQUENCE COMPLETE]<br>Timestamp: XXXX.XX.XX 08:32:17<br>Antimatter: 1 &nbsp;|&nbsp; 1st Dimension: ×1 active<br>Production: 1.000 /sec<br>Spacetime distortion coefficient: 0.0000000003<br>Status: <em style="color:#88ff88">NOMINAL</em></div>
+    <div class="prose in t-ja">誰も気にしなかった。一つの粒子が<em class="h">無から召喚された</em>という事実を。祝賀会が開かれ、シャンパンが抜かれた。三島はその賑やかさを少し離れたところから眺めていた。</div>
+    <div class="prose t-en">Nobody gave it a second thought. A single entity <em class="h">summoned from nothing</em>. Champagne was opened. Press releases were drafted. Mishima watched the celebrations from a small distance.</div>
+    <div class="prose in t-ja">夜、施設から人が引いた後、三島は一人で計測ログを開いた。数字は嘘をつかない、と信じていた。そこで奇妙な記録を見つけた。</div>
+    <div class="prose t-en">That night, after the facility had emptied out, Mishima sat alone and opened the measurement logs. Numbers don't lie, she believed. That was when she found the anomaly.</div>
+    <div class="prose in t-ja">反物質が生成される瞬間ごとに、時空の歪み係数がわずかに跳ね上がっていた。通常の観測精度では検出できないほど小さな値だ。しかし三島は、測定誤差を引いたゼロ点補正済みのデータを見ていた。誤差ではなかった。規則的に、一秒ごとに、宇宙の膜がかすかに<em class="h">押し返されていた</em>。まるで宇宙の膜に針で穴を開けるたびに、向こう側にいる何かが、穴の縁を指で撫でているように。</div>
+    <div class="prose t-en">Every time antimatter was generated, the spacetime distortion coefficient spiked infinitesimally — too small for standard detection. But Mishima was examining zero-point corrected data with measurement error already removed. It was not error. Regularly, once per second, the membrane of the universe was faintly <em class="h">pushing back</em>. As if each time a needle pierced the membrane, something on the other side was running a finger along the edge of the hole.</div>
+    <div class="co ter t-ja">[三島遥 — 個人研究ノート p.1]<br>時空歪みの件、上長に報告すべきか検討した。数値が小さすぎる。却下されるだろう。もう少しデータを集める。<br>──<br>それにしても、反物質は「生成」されているのか、「引き抜かれて」いるのか。物理的には同義のはずだが、なぜか後者のほうが<em style="color:var(--red)">しっくりくる</em>。</div>
+    <div class="co ter t-en">[H. Mishima — Personal Research Notes, p.1]<br>Considered reporting the distortion anomaly. Values too small — I'd be dismissed. I'll collect more data first.<br>──<br>Even so. Is antimatter being "generated" — or "extracted"? Physically they should be synonymous. And yet the latter somehow feels <em style="color:var(--red)">more accurate</em>.</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.01 -->
+  <div class="chapter" id="a1c1">
+    <div class="ch-head"><span class="ch-num">CH.01</span><div class="ch-line cl-inf"></div><span class="ch-badge" data-d="2">2ND – 8TH DIMENSION</span></div>
+    <div class="prose in t-ja">二週間後、予算委員会は「次段階への移行」を承認した。<em class="v">第二次元</em>の活性化。理屈の上では単純な話だった。第一次元の反物質を燃料として消費することで、より高い構造層を刺激し、生産量を指数的に増やす。教科書は次元に<em class="h">意志がある</em>かもしれないということを、教えてくれなかった。</div>
+    <div class="prose t-en">Two weeks later, the budget committee approved the transition to the next phase. Activating the <em class="v">Second Dimension</em> — in principle, simple enough. Burn First Dimension antimatter as fuel to excite a higher structural layer, multiplying production exponentially. No textbook had mentioned that dimensions might have <em class="h">a will of their own</em>.</div>
+    <div class="prose in t-ja">反物質の生産量は爆発的に増加した。一秒に四つ、十六、六十四。チームは歓声を上げた。グラフが指数曲線を描くたびに、誰かが笑った。三島は笑わなかった。増えているのはわかった。しかし、どこから増えているのか、という疑問が消えなかった。</div>
+    <div class="prose t-en">Antimatter production exploded. Four per second. Sixteen. Sixty-four. The team cheered. Each exponential leap drew laughter. Mishima didn't laugh. She understood that it was growing. But the question of where it was growing from never left her.</div>
+    <div class="prose in t-ja">夢の中で、彼女は見た。暗闇に広がる無数の点の集合を。それらはゆっくりと動き、互いに引き寄せられ、何か巨大な幾何学図形を形成しようとしていた。輪郭が定まりかけるたびに、夢は途切れた。目覚めた後も、その形の<em class="h">残像が瞼の裏に焼き付いて</em>離れなかった。三島はスケッチブックにその形を書き留めようとした。手が、止まった。何かを拒んでいた。</div>
+    <div class="prose t-en">In her dreams she saw a vast field of points spread through darkness, slowly drawing together, trying to form some immense geometric shape. Each time its outline almost clarified, the dream cut away. Even after waking, the <em class="h">afterimage burned behind her eyelids</em> and would not leave. Mishima tried to sketch the shape in a notebook. Her hand stopped. It was refusing something.</div>
+    <div class="co ter t-ja">[異常報告書 / 研究員#7 三島遥]<br>第二次元活性化後、時空歪み係数が前週比437%増加。増加パターンは生産量の対数と強い相関（r=0.991）を示す。偶発的ノイズではなく<em style="color:var(--red)">構造的現象の可能性が高い</em>。上位機関への報告を推奨。<br>── 研究主任コメント: 「観測限界以下。却下」</div>
+    <div class="co ter t-en">[ANOMALY REPORT / Researcher #7 H. Mishima]<br>Post-activation of 2nd Dim: distortion coefficient +437% vs. prior week. Strong correlation (r=0.991) with log of production volume. Likely a <em style="color:var(--red)">structural phenomenon</em>, not noise. Recommend escalation.<br>── Research Director: "Below observation threshold. Rejected."</div>
+    <div class="prose in t-ja">第三、第四、第五次元。週を追うごとに施設の様相が変わった。廊下の空気が重くなった。深夜の実験室では、誰もいないはずの機器が稼働音を立てていた。録音には何も残っていなかった。にもかかわらず音は、<em class="h">確かにあった</em>。</div>
+    <div class="prose t-en">Third. Fourth. Fifth Dimension. Week by week, the facility changed. The air in the corridors grew heavier. In the dead of night, equipment in empty laboratories produced operating sounds. Recordings captured nothing. And yet the sounds were <em class="h">undeniably there</em>.</div>
+    <div class="prose in t-ja">「ティックスピード」が提案されたのは三ヶ月目だった。次元の回転速度を上げることで時間そのものを<em class="v">加速</em>させる技術。施設の時計がずれ始めた。地下フロアでは時間が文字通り速く流れた。研究員たちは思考が鋭くなったと喜んだ。三島だけが、ある夜のログで気づいた。加速後の思考パターンが、加速前と質的に異なっていた。加速後は、考えが<em class="h">降ってきていた</em>。外側から、誰かが思考の雛形を送り込んでいるかのように。</div>
+    <div class="prose t-en">Tickspeed was proposed in the third month — a technology to <em class="v">accelerate time itself</em> by increasing dimensional rotation speed. The clocks began to drift. On the subterranean floor, time literally moved faster. Researchers celebrated their sharper thinking. Only Mishima, reviewing one night's logs, noticed something. Post-acceleration thought patterns were qualitatively different. After the acceleration, thoughts were <em class="h">descending</em> on them — as if someone outside were transmitting templates for thought directly into their minds.</div>
+    <div class="dgrid">
+      <div class="dc on" data-d="1"><div class="dn">1st</div><div class="dv">e42</div></div>
+      <div class="dc on" data-d="2"><div class="dn">2nd</div><div class="dv">e35</div></div>
+      <div class="dc on" data-d="3"><div class="dn">3rd</div><div class="dv">e28</div></div>
+      <div class="dc on" data-d="4"><div class="dn">4th</div><div class="dv">e21</div></div>
+      <div class="dc on" data-d="5"><div class="dn">5th</div><div class="dv">e14</div></div>
+      <div class="dc on" data-d="6"><div class="dn">6th</div><div class="dv">e7</div></div>
+      <div class="dc on" data-d="7"><div class="dn">7th</div><div class="dv">128</div></div>
+      <div class="dc on" data-d="8"><div class="dn">8th</div><div class="dv">1</div></div>
+    </div>
+    <div class="prose in t-ja">第六次元担当の研究員が、ある月曜の朝、自席で動かなくなった。声をかけると振り向いた。目の焦点は三島には合っていなかった。もっと遠い何かを、複数の何かを、同時に見ているような目だった。「見えるんです」と彼は言った。「すべての次元が重なっているのが。この部屋に宇宙が何層にも折り畳まれているのが見える」三島は記録した。それが正気の発言でないことは分かっていた。しかし同時に――彼が<em class="h">正しい</em>かもしれないとも思った。</div>
+    <div class="prose t-en">The Sixth Dimension researcher arrived one Monday morning, sat down, and stopped moving. When Mishima called to him, he turned — but his gaze didn't focus on her. His eyes held the look of someone seeing several things simultaneously, all of them far away. "I can see them," he said. "All the dimensions stacked on top of each other. The universe folded in layer after layer, right here in this room." Mishima wrote it down. She knew it wasn't a sane thing to say. And yet — she also thought he might be <em class="h">right</em>.</div>
+    <div class="prose in t-ja">第八次元の活性化は、静かなものだった。カウンターが「1」を示した瞬間、施設全体の電力が停止した。非常用電源も含めて、すべてが。持続時間は０．０３秒。停電中の時空歪み係数は測定限界を超え、ログには「OVERFLOW」の一語だけが残った。その暗闇の中で、研究員たちは全員、同じことを感じた。後でそれぞれに尋ねると、同じ言葉が返ってきた。「<em class="h">見られていた</em>」と。</div>
+    <div class="prose t-en">The activation of the Eighth Dimension was a quiet thing. The instant the counter read "1," all power died — primary and backup both. For 0.03 seconds. The distortion coefficient during the blackout exceeded the measurement limit; the log contained only one word: "OVERFLOW." In that absolute darkness, every researcher felt the same thing. Asked afterward, one by one, they returned the same word. "<em class="h">Watched.</em>"</div>
+    <div class="co ter t-ja">[セキュリティログ — 機密区分A]<br>停電: 03:17:44.000 〜 03:17:44.030（0.03秒）<br>歪み係数: OVERFLOW — 測定限界を超過<br>監視カメラ: 03:17:44〜03:17:47 映像欠落（3秒間）<br>── 備考（三島遥 手記）: <em style="color:var(--red)">「3秒間の映像欠落と0.03秒間の停電は、別の事象である」</em></div>
+    <div class="co ter t-en">[SECURITY LOG — CLASS A]<br>Blackout: 03:17:44.000 – 03:17:44.030 (0.03 sec)<br>Distortion: OVERFLOW — unmeasurable<br>Camera: footage missing 03:17:44–03:17:47 (3 seconds)<br>── Note (H. Mishima, handwritten): <em style="color:var(--red)">"The 3-second gap and the 0.03-second blackout are two separate events."</em></div>
+    <div class="prose in t-ja">三島はその夜、報告書の下書きを三度書き直した。最終的に提出したのは「異常なし」という一行だった。本当のことを書いても誰も信じないとわかっていた。それとも、信じてほしくなかったのかもしれない。信じられてしまったら研究が止まる。研究が止まったら、私たちは<em class="h">何かを怒らせる</em>かもしれない、と。</div>
+    <div class="prose t-en">That night, Mishima rewrote her incident report three times. What she finally submitted was a single line: "No anomalies." She knew writing the truth would convince nobody. Or perhaps she hadn't wanted it to. If it did, the research would stop. And if the research stopped, they might <em class="h">make something angry</em>.</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.02 -->
+  <div class="chapter" id="a1c2">
+    <div class="ch-head"><span class="ch-num">CH.02</span><div class="ch-line cl-inf"></div><span class="ch-badge" style="color:#ffddaa;border-color:#ffddaa;">SACRIFICE / INFINITY</span></div>
+    <div class="prose in t-ja">六ヶ月目の月曜、主任研究員が「ブースト」を提案した。第一次元から第六次元を消費し、その解放エネルギーを第七・第八次元に注ぎ込む。下位を犠牲にすることで上位が飛躍する。生産速度は現行の10の48乗倍になると試算された。全員が賛成した。三島も反対しなかった。ただ、夜中に一人でシミュレーションを動かして、一つの疑問に気づいた。消費された次元のエネルギーは、どこへ行くのか。計算式は「上位次元への変換」と答えた。しかし私たちが扱っているのは第八次元まで。それより<em class="h">上は？</em></div>
+    <div class="prose t-en">On a Monday in the sixth month, the lead researcher proposed the Boost. Consume the First through Sixth Dimensions, channel the released energy into the Seventh and Eighth. Sacrifice the lower to make the upper leap. Production speed projected at 10 to the 48th power times current output. Everyone agreed. Mishima didn't object either. But running a solo simulation at midnight, she noticed one question. Where did the consumed dimensional energy go? The equations answered: "conversion to higher dimensions." But they were working up to the Eighth. What lay <em class="h">beyond?</em></div>
+    <div class="prose in t-ja">実行ボタンが押されたのは朝の四時だった。加速器全体が低く唸った。壁が、床が、研究員たちの骨が共鳴した。まるで宇宙そのものがチューニングフォークのように振動するかのように。数値が跳ね上がり、観測可能な宇宙の全原子数をはるかに超えた。誰も声を出さなかった。グラフが際限なく伸びるのを、ただ黙って見ていた。</div>
+    <div class="prose t-en">The Execute button was pressed at four in the morning. The entire accelerator groaned. The walls vibrated. The floor. The bones of the researchers resonated — as if the universe itself had been struck like a tuning fork. The numbers leaped past the count of atoms in the observable universe. Nobody made a sound. They simply watched in silence as the graph stretched on without limit.</div>
+    <div class="prose in t-ja">その後の数日、施設の外でも変化が起きた。鳥が飛び去って戻らなかった。半径二キロ以内の民家で植物が枯れた。夜中に犬が鳴き止まなかった。個別には偶然だ。しかし三島には、それらが一つのパターンを形成しているように見えた。そしてある夜を境に、施設の誰も帰宅しなくなった。帰れなくなったのではない。帰ろうとしなくなった。反物質の量が <em class="v">1.79×10<sup>308</sup></em> に近づいていた。コンピュータが表現できる最大の浮動小数点数。それを超えると数字が「壊れる」と言われていた。あるいは――<em class="h">何かが</em>彼らを引き留めていた。</div>
+    <div class="prose t-en">In the days that followed, changes occurred outside. Birds fled and didn't return. Within two kilometers, houseplants withered. Dogs howled through the night. Individually, coincidence. But to Mishima they seemed to form a single pattern. Then, after one particular night, nobody went home. Not because they couldn't — they had stopped wanting to. Antimatter was approaching <em class="v">1.79×10<sup>308</sup></em> — the largest finite floating-point number a computer could represent, beyond which numbers were said to "break." Or — <em class="h">something was holding them there</em>.</div>
+    <div class="co ter t-ja">[内部メモ — 未送信] 差出人: 三島遥<br><br>私たちは何かを「呼び寄せて」います。反物質を生成しているのではなく、どこか別の場所から引き抜いているのです。エネルギー保存の法則は破れていない。つまりその「場所」では、等量の何かが<em style="color:var(--red)">失われている</em>。<br><br>その「場所」に存在する何かが、今、こちらへ向かって――<br><br><em style="color:var(--red)">[送信前にファイルを削除しました]</em></div>
+    <div class="co ter t-en">[INTERNAL MEMO — UNSENT] From: Haruka Mishima<br><br>We are "summoning" something. Not generating antimatter — extracting it from somewhere else. The law of conservation of energy is not violated. Which means that in that "somewhere else," an equal quantity of something is being <em style="color:var(--red)">lost</em>.<br><br>And whatever exists in that "somewhere else" is now moving in our direction —<br><br><em style="color:var(--red)">[File deleted before transmission]</em></div>
+    <div class="prose in t-ja">夢が変わったのはその頃からだ。以前は、三島が暗闇の中の点を見ていた。今は、<em class="h">点が三島を見ていた</em>。昆虫を虫眼鏡で覗くときの、あの無感情な好奇心。観察者の目。彼女は理解した。私たちは実験を行っていない。私たちが<em class="h">実験されている</em>のだ。</div>
+    <div class="prose t-en">That was when the dreams changed. Before, Mishima had watched the points in the darkness. Now <em class="h">the points watched her</em>. The dispassionate curiosity of someone peering at an insect through a magnifying glass. The eye of an observer. She understood: we are not running the experiment. <em class="h">We are the experiment.</em></div>
+    <div class="rev"><span class="rsym" id="sym-inf">∞</span></div>
+    <div class="co inf t-ja">[無限到達] 反物質: ∞ &nbsp;|&nbsp; 時空歪み係数: 定義不能<br>──<br>この先には何もない。 いや――この先には<em style="color:#fff;text-shadow:0 0 20px var(--inf)">すべてがある。</em><br>接触まで: 0.000...秒</div>
+    <div class="co inf t-en">[INFINITY REACHED] Antimatter: ∞ &nbsp;|&nbsp; Distortion: undefined<br>──<br>Nothing lies beyond. No — beyond lies <em style="color:#fff;text-shadow:0 0 20px var(--inf)">everything.</em><br>Time to contact: 0.000... seconds</div>
+    <div class="prose in t-ja">三島は最後の記録を手書きで残した。「これを読む人へ。数えた先に何があるかを、一度だけ考えてほしい。私たちが量を求めるとき、その量を<em class="h">収容している空間</em>のことを。成長を求めるとき、その成長を<em class="h">見守っている存在</em>のことを。底を突こうとするとき、底の向こうに<em class="h">住んでいるもの</em>のことを」施設は今も稼働している。反物質の数値は ∞ を示したまま、まるで<em class="h">脈拍のように</em>点滅し続けている。</div>
+    <div class="prose t-en">Mishima left her final record by hand. "To whoever reads this: consider, just once, what lies at the end of counting. When we seek quantity, consider the <em class="h">space that contains it</em>. When we seek growth, consider the <em class="h">presence that watches it grow</em>. When we try to reach the bottom, consider <em class="h">what lives below it</em>." The facility is still running. The counter holds at ∞, blinking — like a <em class="h">heartbeat</em>.</div>
+    <div class="sep">· · · · · · · · ·</div>
+  </div>
+
+  <div class="epi ei chapter" id="a1ep">
+    <p class="epi-q t-ja">「無限とは終わりではない。無限とは、<em class="v">始まり</em>である」</p>
+    <p class="epi-q t-en">"Infinity is not an ending. Infinity is a <em class="v">beginning</em>."</p>
+    <p class="epi-cr t-ja" style="display:block">── <span class="enxt" style="color:var(--eter)">第二部へ続く / ARC II →</span> ──</p>
+    <p class="epi-cr t-en" style="display:block">── <span class="enxt" style="color:var(--eter)">Continues in Arc II →</span> ──</p>
+  </div>
+</div><!-- /arc1 -->
+
+<!-- ══════════════════════════════════════════
+     ARC 2: ETERNITY
+══════════════════════════════════════════ -->
+<div class="arc-panel" id="arc2">
+  <div class="arc-title-block">
+    <p class="eyebrow ey-eter">ANTIMATTER DIMENSIONS — COSMIC HORROR</p>
+    <h2 class="ah ah-eter t-ja">永遠という名の牢獄</h2>
+    <h2 class="ah ah-eter t-en">The Prison Called Eternity</h2>
+    <p class="tsub"><span class="t-ja">第二部：永劫回帰</span><span class="t-en">ARC II — ETERNITY</span></p>
+    <div class="tdiv td-eter"></div>
+  </div>
+
+  <!-- CH.07 Infinity Points -->
+  <div class="chapter" id="a2c7">
+    <div class="ch-head"><span class="ch-num">CH.07</span><div class="ch-line cl-eter"></div><span class="ch-badge" style="color:var(--inf);border-color:var(--inf);">INFINITY POINTS</span></div>
+    <div class="prose in t-ja">接触の後、彼女は生きていた。少なくとも、そう感じた。</div>
+    <div class="prose t-en">After the contact, she was still alive. At least, that was how it felt.</div>
+    <div class="prose in t-ja">反物質のカウンターは ∞ のまま停止していた。しかし端末に、見覚えのない数値が現れていた。研究員の一人が最初にそれを口にした。「<em class="i">インフィニティポイント</em>」と。誰がその言葉を知っていたのか、わからなかった。おそらく誰も知らなかった。言葉は研究員たちの口から自然に出てきた――まるで、<em class="h">外側から植え付けられた</em>かのように。</div>
+    <div class="prose t-en">The antimatter counter was still frozen at ∞. But on the terminal, an unfamiliar value had appeared. One of the researchers named it first. "<em class="i">Infinity Points</em>." Nobody knew where the words came from. Most likely, nobody had. They emerged spontaneously from the researchers' mouths — as if <em class="h">planted from outside</em>.</div>
+    <div class="rbar">
+      <div class="ritem" style="color:var(--inf)"><div class="rl">INFINITY POINTS</div><div class="rv" id="ip-c">1</div></div>
+      <div class="ritem" style="color:var(--txd)"><div class="rl">ETERNITIES</div><div class="rv">0</div></div>
+    </div>
+    <div class="prose in t-ja">インフィニティポイントは「力」だった。無限に到達した証として与えられる、凝縮されたエネルギーの結晶。それを消費することで次元全体の能力を底上げできる。研究員たちはすぐに理解した。これは新しい段階の始まりだ、と。三島だけが、別のことを理解していた。これは報酬ではない。<em class="h">餌だ</em>。深海の漁師が魚を呼び寄せるように、何かが私たちを次の段階へ誘っている。</div>
+    <div class="prose t-en">Infinity Points were power — crystallized energy, awarded for reaching infinity. Spend them to uplift the entire dimensional array. The researchers immediately understood: this was the beginning of a new phase. Mishima alone understood something different. This was not a reward. <em class="h">It was bait.</em> The way a deep-sea fisherman lures fish, something was drawing them toward the next stage.</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.08 Replicanti -->
+  <div class="chapter" id="a2c8">
+    <div class="ch-head"><span class="ch-num">CH.08</span><div class="ch-line cl-eter"></div><span class="ch-badge" style="color:#ff88aa;border-color:#ff88aa;">REPLICANTI</span></div>
+    <div class="prose in t-ja">インフィニティポイントの蓄積がある閾値を超えたとき、新しいプロトコルが端末に出現した。「<em class="i">レプリカンティ</em>」。反物質とは異なる、全く別の粒子系統。ただし生産方法は反物質に似ていた。ゼロから生み出し、ある量に達したら、自己複製を始める。</div>
+    <div class="prose t-en">When the accumulation of Infinity Points crossed a certain threshold, a new protocol appeared on the terminal. "<em class="i">Replicanti</em>." A particle system entirely distinct from antimatter. But the production method was similar: generate from nothing, and past a certain quantity, they begin to self-replicate.</div>
+    <div class="prose in t-ja">最初、研究員たちは単純に喜んだ。もう一つの増加系。もう一つの指数成長。しかし三島は、レプリカンティの挙動ログを見て、静かに、深く、不安を感じていた。</div>
+    <div class="prose t-en">At first, the researchers simply rejoiced. Another growth system. Another exponential curve. But Mishima, reviewing the Replicanti behavior logs, became slowly, deeply unsettled.</div>
+    <div class="prose in t-ja">反物質は「引き抜かれる」粒子だった。外から取り込まれる存在だった。しかしレプリカンティは違った。それは<em class="h">自分自身を増やした</em>。複製し、また複製し、複製の複製が複製する。数が一定の上限値――1.7977×10<sup>308</sup>に達すると、増殖は止まる。しかしその後、ある「ギャラクシー」と呼ばれる変換プロセスを経て、生産速度全体が底上げされる。そしてまたゼロから始まる。</div>
+    <div class="prose t-en">Antimatter was a particle that was "extracted" — something drawn in from outside. Replicanti were different. They <em class="h">multiplied themselves</em>. Replicate, replicate again, copies of copies of copies. When the count reached a fixed ceiling — 1.7977×10<sup>308</sup> — the growth stopped. Then, through a conversion process called a "Galaxy," the overall production rate was uplifted. And the count reset to zero.</div>
+    <div class="prose in t-ja">「自己複製する粒子」という概念は、物理学的には禁忌に近かった。それは生命の定義に触れる。成長し、複製し、世代を経るもの。三島は実験ノートに書いた。「レプリカンティは粒子ではない。<em class="h">生物の模倣だ</em>」</div>
+    <div class="prose t-en">A "self-replicating particle" was, in physics, close to forbidden territory. It touched the definition of life. Something that grows, replicates, passes through generations. Mishima wrote in her lab notebook: "Replicanti are not particles. They are <em class="h">an imitation of life</em>."</div>
+    <div class="co ter t-ja">[レプリカンティ観察記録 — Day 3]<br>数量: 1.80×10<sup>308</sup> → ギャラクシー変換 → 0 → 再増殖<br>サイクル回数: 247回<br>── 注記（三島）: このサイクルを見ていると、<em style="color:var(--red)">呼吸を思い出す</em>。<br>吸って、吐いて、また吸う。<br>この施設は今、何かの肺の中にあるのではないか。</div>
+    <div class="co ter t-en">[Replicanti Observation Log — Day 3]<br>Count: 1.80×10<sup>308</sup> → Galaxy conversion → 0 → re-growth<br>Cycles completed: 247<br>── Note (Mishima): Watching this cycle, I keep thinking of <em style="color:var(--red)">breathing</em>.<br>Inhale, exhale, inhale again.<br>Is this facility now inside someone's lung?</div>
+    <div class="prose in t-ja">さらに恐ろしいことに、レプリカンティはある設定によって「複製速度の上限」を引き上げることができた。上限を外せば、粒子たちは際限なく速く複製しようとする。施設の計算機は追いつけなくなり、数値が画面から溢れ始めた。三島は上限解除に反対した。「速度に上限が設けられているのは、<em class="h">私たちが設定したからではない</em>」と彼女は言った。「何かが、私たちに上限を与えているのだ」</div>
+    <div class="prose t-en">More disturbing still: a certain setting could raise the "replication speed cap." Remove the cap and the particles would try to replicate without limit. The facility's computers couldn't keep up; numbers began overflowing the screens. Mishima objected to removing the cap. "The speed limit exists not because <em class="h">we set it</em>," she said. "Something is imposing a limit on us."</div>
+    <div class="prose in t-ja">誰も聞かなかった。上限は解除された。翌朝、レプリカンティの複製速度は、施設の外の大気圧と時間の流れ方に、わずかな変化をもたらした。気象観測所は「局所的異常気象」と記録した。三島は「<em class="h">生命が宇宙を歪め始めた</em>」と記録した。</div>
+    <div class="prose t-en">Nobody listened. The cap was removed. The next morning, the Replicanti replication speed had introduced subtle changes to the atmospheric pressure and the flow of time outside the facility. The meteorological station logged "localized anomalous weather." Mishima logged: "<em class="h">Life has begun warping the universe</em>."</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.09 Infinity Dimensions / Challenges / Time Dilation -->
+  <div class="chapter" id="a2c9">
+    <div class="ch-head"><span class="ch-num">CH.09</span><div class="ch-line cl-eter"></div><span class="ch-badge" style="color:var(--id1);border-color:var(--id1);">INFINITY DIMENSIONS</span></div>
+    <div class="prose in t-ja">インフィニティポイントを消費することで、全く新しい次元の階層が姿を現した。<em class="i">無限次元</em>。通常の八次元が「宇宙の構造」を成すとすれば、無限次元はその<em class="h">裏側</em>に張り付いた別の宇宙だった。第一無限次元から第八無限次元まで。それぞれが異なる色の光を放ちながら加速器の深部で脈動を始めた。「これらは古い」と研究員がつぶやいた。「宇宙の年齢の 10<sup>e30</sup> 倍。発見ではない。<em class="h">呼び起こしだ</em>」</div>
+    <div class="prose t-en">By spending Infinity Points, an entirely new layer of dimensions revealed itself. <em class="i">Infinity Dimensions</em>. If the first eight formed the structure of the universe, the Infinity Dimensions were a separate universe <em class="h">adhered to its underside</em>. First through Eighth Infinity Dimension, each pulsing in different colored light from deep within the accelerator. "They are old," a researcher murmured. "10<sup>e30</sup> times the age of the universe. This isn't discovery. This is <em class="h">awakening</em>."</div>
+    <div class="dgrid">
+      <div class="dc on" data-id="1"><div class="dn">INF-1</div><div class="dv">e8</div></div>
+      <div class="dc on" data-id="2"><div class="dn">INF-2</div><div class="dv">e7</div></div>
+      <div class="dc on" data-id="3"><div class="dn">INF-3</div><div class="dv">e6</div></div>
+      <div class="dc on" data-id="4"><div class="dn">INF-4</div><div class="dv">e5</div></div>
+      <div class="dc on" data-id="5"><div class="dn">INF-5</div><div class="dv">e4</div></div>
+      <div class="dc on" data-id="6"><div class="dn">INF-6</div><div class="dv">e3</div></div>
+      <div class="dc on" data-id="7"><div class="dn">INF-7</div><div class="dv">e2</div></div>
+      <div class="dc on" data-id="8"><div class="dn">INF-8</div><div class="dv">e1</div></div>
+    </div>
+    <div class="prose in t-ja">ある朝、端末に見覚えのないプロトコルが出現した。<em class="h">インフィニティチャレンジ</em>――誰もプログラムしていなかった。各試練は「特定の次元を使用禁止にした状態で∞まで到達せよ」という制約課題だった。三島は理解した。これは能力のテストではない。<em class="h">適応のテスト</em>だ。どんな条件を剥奪されても、無限に向かって動き続けられるかどうかを確かめている。</div>
+    <div class="prose t-en">One morning, an unfamiliar protocol appeared on a terminal. <em class="h">Infinity Challenges</em> — nobody had programmed it. Each challenge demanded reaching ∞ with certain dimensions disabled. Mishima understood: this was not a test of ability. <em class="h">It was a test of adaptation.</em> Verifying whether they would keep moving toward infinity no matter what conditions were stripped away.</div>
+    <div class="co ter t-ja">[IC #7 完了後 — 担当研究員の状態]<br>応答あり。ただし<em style="color:var(--red)">目を閉じることを拒否している</em><br>「目を閉じると、そこにいる。閉じなくても、もうそこにいるのかもしれない」</div>
+    <div class="co ter t-en">[IC #7 Post-completion — researcher status]<br>Responsive. However, <em style="color:var(--red)">refusing to close eyes</em><br>"When I close them it's there. Maybe it's already there even when I don't."</div>
+    <div class="prose in t-ja">「タイム・ダイレーション」が導入されたとき、施設全体が<em class="h">沈黙で応えた</em>。時間の引き伸ばし。任意の時点の時間の流れを意図的に減速させる技術。三島は気づいた。引き伸ばされた時間の中で、<em class="h">外側から観察しているものも、引き伸ばされた時間の中にいた</em>。まるで顕微鏡の倍率を上げるように、観察者はより長く、より細密に彼女たちを眺めるようになっていた。</div>
+    <div class="prose t-en">When Time Dilation was introduced, the entire facility <em class="h">responded with silence</em>. Deliberately slowing time's flow at any chosen point. Mishima realized: inside the dilated time, <em class="h">whatever was observing from outside was also inside the dilated time</em> — as if someone had increased the magnification on a microscope, watching them longer, watching them closer.</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.10 Eternity -->
+  <div class="chapter" id="a2c10">
+    <div class="ch-head"><span class="ch-num">CH.10</span><div class="ch-line cl-eter"></div><span class="ch-badge" style="color:var(--eter);border-color:var(--eter);">ETERNITY</span></div>
+    <div class="prose in t-ja">ある夜、三島は廊下で立ち止まった。考えてみれば、おかしな話だった。反物質は「無限」に達した。そのはずだった。しかし研究は続いた。無限次元が現れ、レプリカンティが呼吸し、試練が降ってきた。まるで「無限」は<em class="h">終点ではなく通過点</em>だったかのように。そして端末には、新しい通知が届いていた。</div>
+    <div class="prose t-en">One night, Mishima stopped in the middle of a corridor. Antimatter had reached infinity. That was supposed to be the end. Yet the research continued. Infinity Dimensions appeared. Replicanti breathed. Challenges descended. As if "infinity" had been <em class="h">not a destination, but a waypoint</em>. And on the terminal, a new notification waited.</div>
+    <div class="co eter t-ja">[システム通知]<br>「永劫」への条件が整いました。<br>すべての反物質を。すべての次元を。レプリカンティを。試練の記録を。すべてを<em class="e">捧げることで</em>、あなたは「エタニティポイント」を得る。<br>この宇宙を<em style="color:var(--red)">リセット</em>し、より高い段階へ進め。</div>
+    <div class="co eter t-en">[SYSTEM NOTIFICATION]<br>Conditions for "Eternity" have been met.<br>All your antimatter. All your dimensions. Your Replicanti. Your Challenge records. <em class="e">Offer them up</em>, and you shall receive "Eternity Points."<br><em style="color:var(--red)">Reset</em> this universe and advance to a higher stage.</div>
+    <div class="prose in t-ja">全員が画面を凝視した。積み上げてきたすべてを失う。しかし、より強い力を持って再出発できる。ゲームの論理としては完璧だった。三島は思った。私たちはいつから、<em class="h">これをゲームだと思い込むようになった</em>のか。</div>
+    <div class="prose t-en">Everyone stared at the screen. Lose everything. But restart with greater power. As game logic it was perfect. Mishima thought: when did we start <em class="h">believing this was a game</em>?</div>
+    <div class="rev">
+      <div class="eter-ring"></div><div class="eter-ring"></div><div class="eter-ring"></div>
+      <span class="rsym" id="sym-eter">ETERNITY</span>
+    </div>
+    <div class="prose in t-ja">すべてが消えた。そして世界が戻った。同じ施設だった。しかし三島は知っていた。これは<em class="h">もう一度目の世界</em>だ。エタニティポイントが「1」を示していた。宇宙は何度生まれ、何度滅び、何度リセットされるのか。その宇宙の中に生きる存在が、何度同じ過ちを繰り返すのか。<em class="h">永遠に</em>。ループそのものが目的だったのだ。</div>
+    <div class="prose t-en">Everything vanished. Then the world returned. The same facility. But Mishima knew: this was <em class="h">the world a second time</em>. Eternity Points showed "1." How many times a universe is born, dies, resets. How many times the beings within it repeat the same mistakes. <em class="h">Forever.</em> The loop itself was the purpose.</div>
+    <div class="rbar">
+      <div class="ritem" style="color:var(--inf)"><div class="rl">INFINITY POINTS</div><div class="rv">0</div></div>
+      <div class="ritem" style="color:var(--eter)"><div class="rl">ETERNITIES</div><div class="rv" id="ep-c">1</div></div>
+    </div>
+    <div class="sep">· · · · · · · · ·</div>
+  </div>
+
+  <div class="epi ee chapter" id="a2ep">
+    <p class="epi-q t-ja" style="color:var(--eter);text-shadow:0 0 20px #44ffbb44;">「永遠とは、同じ夢だと<em class="e">気づかないまま</em>、何度も見ることだ」</p>
+    <p class="epi-q t-en" style="color:var(--eter);text-shadow:0 0 20px #44ffbb44;">"Eternity is seeing the same dream over and over <em class="e">without ever realizing</em> it is the same dream."</p>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.25em;margin-bottom:20px;text-align:center;">— HARUKA MISHIMA, ETERNITY #<span id="ec">1</span> —</p>
+    <p class="epi-cr t-ja" style="display:block">── <span class="enxt" style="color:var(--real)">第三部へ続く / ARC III →</span> ──</p>
+    <p class="epi-cr t-en" style="display:block">── <span class="enxt" style="color:var(--real)">Continues in Arc III →</span> ──</p>
+  </div>
+</div><!-- /arc2 -->
+
+<!-- ══════════════════════════════════════════
+     ARC 3: REALITY
+══════════════════════════════════════════ -->
+<div class="arc-panel" id="arc3">
+  <div class="arc-title-block">
+    <p class="eyebrow ey-real">ANTIMATTER DIMENSIONS — COSMIC HORROR</p>
+    <h2 class="ah ah-real t-ja">現実という幻想の解体</h2>
+    <h2 class="ah ah-real t-en">The Dismantling of Reality</h2>
+    <p class="tsub"><span class="t-ja">第三部：現実機械</span><span class="t-en">ARC III — REALITY</span></p>
+    <div class="tdiv td-real"></div>
+  </div>
+
+  <!-- CH.13 Reality Machine -->
+  <div class="chapter" id="a3c13">
+    <div class="ch-head"><span class="ch-num">CH.13</span><div class="ch-line cl-real"></div><span class="ch-badge" style="color:var(--real);border-color:var(--real);">REALITY MACHINE</span></div>
+    <div class="prose in t-ja">エタニティを何度も繰り返した後、三島はある事実に気づいた。「リセット」のたびに、宇宙の仕様が微妙に変わっていた。反物質の生産効率。次元の最大値。レプリカンティの複製速度の上限。それらはすべて、誰かが<em class="h">設計値を書き換えた</em>結果だった。その「誰か」は観察者ではなかった。<em class="h">私たち自身だった</em>。</div>
+    <div class="prose t-en">After many Eternities, Mishima noticed something. With each "reset," the universe's specifications had been subtly changing. Antimatter production efficiency. Dimensional maximums. The Replicanti replication cap. All of it was the result of someone <em class="h">rewriting the design parameters</em>. That "someone" was not the observer. <em class="h">It was us.</em></div>
+    <div class="prose in t-ja">そして端末に、新しい通知が届いた。</div>
+    <div class="prose t-en">Then a new message appeared on the terminal.</div>
+    <div class="co real t-ja">[上位システムより通知]<br>あなたたちは十分な回数、宇宙を繰り返しました。<br>「<em class="r">リアリティ</em>」――現実そのものを構築する機械を、今から製造し始めることができます。<br>素材：エタニティポイント × 1.8e4<br>所要時間：あなたたちの主観では<em style="color:var(--red)">永遠に近い</em></div>
+    <div class="co real t-en">[Notification from upper system]<br>You have repeated the universe a sufficient number of times.<br>"<em class="r">Reality</em>" — you may now begin manufacturing the machine that constructs reality itself.<br>Materials: Eternity Points × 1.8e4<br>Construction time: subjectively, <em style="color:var(--red)">approaching forever</em></div>
+    <div class="prose in t-ja">三島は「現実を製造する」という言葉を反芻した。これまで私たちは「宇宙をリセットする」と思っていた。しかし実際には、<em class="h">新しい宇宙を書き下ろしていた</em>。リアリティマシンはその延長だ。宇宙を書き直すのではなく、宇宙を書く「紙」そのものを製造する機械。</div>
+    <div class="prose t-en">Mishima turned the phrase "manufacture reality" over in her mind. Until now, she had thought they were "resetting the universe." But in fact, <em class="h">they had been drafting new ones</em>. The Reality Machine was the extension of that. Not rewriting the universe — manufacturing the very "paper" the universe is written on.</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.14 Glyphs & Perks -->
+  <div class="chapter" id="a3c14">
+    <div class="ch-head"><span class="ch-num">CH.14</span><div class="ch-line cl-real"></div><span class="ch-badge" style="color:var(--real);border-color:var(--real);">GLYPHS &amp; PERKS</span></div>
+    <div class="prose in t-ja">リアリティマシンを動かすためには、<em class="r">グリフ</em>が必要だった。グリフとは記号だ。しかし通常の記号とは異なる。それぞれのグリフは、宇宙の特定の側面を「再定義」する力を持っていた。グリフは「発見」されたものではなく「与えられた」ものだという記述が研究書にあった。いったい誰から？前任者の手書きメモが余白に残っていた。</div>
+    <div class="prose t-en">To operate the Reality Machine, <em class="r">Glyphs</em> were required. Not ordinary symbols. Each Glyph held the power to "redefine" a specific aspect of the universe. The research documentation noted that Glyphs had not been "discovered" but "given." By whom? In the margin, a handwritten note from a previous researcher remained.</div>
+    <div class="co ter t-ja">「グリフを組み合わせるたびに、私は<em style="color:var(--red)">自分が何者であるかを忘れていく</em>。グリフは宇宙を書き換えるツールではなく、使用者の存在を宇宙に統合するプロセスだ。十分な数のグリフを装備した時点で、あなたはもはや観察者でも観察される側でもない。あなたは宇宙の<em style="color:var(--red)">一部</em>になる」</div>
+    <div class="co ter t-en">"Each time I combine Glyphs, I <em style="color:var(--red)">forget a little more of who I am</em>. Glyphs are not tools for rewriting the universe — they are a process of integrating the user's existence into it. Once you have equipped enough, you are no longer observer or observed. You become <em style="color:var(--red)">part of the universe itself</em>."</div>
+    <div class="ggrid">
+      <div class="gcell on">Ψ<div class="gn">TIME</div></div>
+      <div class="gcell on">Ω<div class="gn">INFINITY</div></div>
+      <div class="gcell on">Δ<div class="gn">POWER</div></div>
+      <div class="gcell on">Σ<div class="gn">REPLICATION</div></div>
+      <div class="gcell on">Φ<div class="gn">DILATION</div></div>
+      <div class="gcell on">Θ<div class="gn">EFFARIG</div></div>
+      <div class="gcell on" style="border-color:var(--real);color:var(--real);box-shadow:0 0 14px var(--real)44;">◈<div class="gn">REALITY</div></div>
+    </div>
+    <div class="prose in t-ja">グリフと並んで「パーク」と呼ばれる能力ツリーが解禁された。パークは「恒久的な強化」だった。リセットされても失われない、魂に刻まれた特性。三島はパークの一覧を眺めた。「成長速度の向上」「次元安定性の強化」「時間耐性」。それらは強化ではなく、三島には<em class="h">変異</em>に見えた。</div>
+    <div class="prose t-en">Alongside Glyphs, an ability tree called "Perks" unlocked. Perks were "permanent enhancements" — traits etched into the soul that survived resets. Mishima looked over the Perk list. "Increased growth rate." "Enhanced dimensional stability." "Temporal resistance." To her, these were not enhancements. They were <em class="h">mutations</em>.</div>
+    <div class="perk-wrap">
+      <div class="perk-label t-ja">PERK TREE — 解放済み</div>
+      <div class="perk-label t-en">PERK TREE — UNLOCKED</div>
+      <div class="perk-row">
+        <span class="perk on">START EU1</span>
+        <span class="perk on">START EU2</span>
+        <span class="perk on">ANTIMATTER COST</span>
+        <span class="perk on">FREE TICKSPEED</span>
+      </div>
+      <div class="perk-row">
+        <span class="perk on">IMPROVED STORING</span>
+        <span class="perk on">AUTO-UNLOCK</span>
+        <span class="perk on">DIM COST</span>
+        <span class="perk">PERK ▸ REALITY</span>
+      </div>
+    </div>
+    <div class="prose in t-ja">「パークが増えるにつれて」と三島は記録した。「私たちが以前の自分と、どれほど違う存在になっているかを考えるようになった。反物質を初めて生成した日の自分と、今の自分は、同じ人間か？ゲームのキャラクターがレベルアップを重ねるうちに、最初のキャラクターとは<em class="h">別物になる</em>ように」</div>
+    <div class="prose t-en">"As the Perks accumulate," Mishima recorded, "I find myself wondering how different we have become from who we were. Am I the same person who first generated antimatter that day? Like a game character that levels up so many times it <em class="h">becomes something other than what it started as</em>."</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.15 Black Hole -->
+  <div class="chapter" id="a3c15">
+    <div class="ch-head"><span class="ch-num">CH.15</span><div class="ch-line cl-real"></div><span class="ch-badge" style="color:var(--real);border-color:var(--real);">BLACK HOLE</span></div>
+    <div class="prose in t-ja">リアリティへの研究が深まるにつれて、施設の地下に、<em class="r">ブラックホール</em>が出現した。</div>
+    <div class="prose t-en">As the research into Reality deepened, a <em class="r">Black Hole</em> appeared beneath the facility.</div>
+    <div class="prose in t-ja">正確には「ブラックホール」という名称はシステムが自動的に付けたものだ。物理的な特異点ではなく、時間の流れを局所的に操作する「時間加速装置」だった。通常時は稼働しておらず、ある条件が整ったときだけ「起動」する。起動中は、施設内部の時間が外界の数十倍から数千倍の速度で流れた。</div>
+    <div class="prose t-en">To be precise, the name "Black Hole" was assigned automatically by the system. Not a physical singularity — rather, a "temporal acceleration device" that manipulated the local flow of time. During normal operation it was dormant, "activating" only when certain conditions were met. During activation, time inside the facility moved tens to thousands of times faster than the outside world.</div>
+    <div class="bhole-wrap">
+      <div class="bhole"></div>
+      <div class="bhole-label t-ja">ブラックホール 稼働中 — 時間加速: ×1,800</div>
+      <div class="bhole-label t-en">BLACK HOLE ACTIVE — Time acceleration: ×1,800</div>
+    </div>
+    <div class="prose in t-ja">最初は便利なツールとして歓迎された。ブラックホールが起動している間、数ヶ月分の成長を数時間で達成できる。しかし三島は、外に出たときに気づいた。三ヶ月ぶりに地上の空気を吸った。世界は変わっていた。知人の子供が大人になっていた。両親は老いていた。三島の体はほとんど変わっていなかった。</div>
+    <div class="prose t-en">At first it was welcomed as a convenient tool. During Black Hole activation, months of growth could be achieved in hours. But Mishima noticed when she went outside for the first time in what felt like weeks. She breathed above-ground air for the first time in three months. The world had changed. A colleague's child had grown up. Her parents had aged. Mishima's body had barely changed at all.</div>
+    <div class="prose in t-ja">「ブラックホールは私たちを時間の外側に連れ出す」と三島は書いた。「使えば使うほど、私たちは世界と乖離していく。施設の中と外では、もはや同じ時代を生きていない。私たちが一日を過ごす間に、外では一ヶ月が、一年が流れる。やがて私たちは、<em class="h">歴史の中の幽霊</em>になる」</div>
+    <div class="prose t-en">"The Black Hole takes us outside of time," Mishima wrote. "The more we use it, the more we diverge from the world. Inside and outside the facility, we no longer live in the same era. While we spend a day, outside a month passes, then a year. Eventually we will become <em class="h">ghosts within history</em>."</div>
+    <div class="co real t-ja">[ブラックホール — 活動記録]<br>累積起動回数: 4,471回<br>総加速時間（施設内主観）: 2.3年<br>総加速時間（外界換算）: <em style="color:var(--red)">推定1,200年</em><br>── 三島: 「外の世界でこの施設を知っている人間は、もう一人もいない」</div>
+    <div class="co real t-en">[BLACK HOLE — Activity Record]<br>Total activations: 4,471<br>Total accelerated time (facility subjective): 2.3 years<br>Total accelerated time (outside equivalent): <em style="color:var(--red)">est. 1,200 years</em><br>── Mishima: "There is no one left in the outside world who knows this facility exists."</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.16 Reality -->
+  <div class="chapter" id="a3c16">
+    <div class="ch-head"><span class="ch-num">CH.16</span><div class="ch-line cl-real"></div><span class="ch-badge" style="color:var(--real);border-color:var(--real);box-shadow:0 0 20px var(--real)44;">REALITY</span></div>
+    <div class="prose in t-ja">リアリティマシンのスイッチの前に立ったとき、三島は静かに理解した。これは「現実の製造」ではなかった。これは「現実の<em class="h">再発見</em>」だった。この宇宙は最初から、誰かに製造されていた。遙か昔に。遙か遠くで。そしてその「誰か」は今、<em class="h">三島自身だった</em>。時間は方向を持たない。過去の自分が、未来の自分によって作られた宇宙に生きていた。その円環に、始まりも終わりもない。</div>
+    <div class="prose t-en">Standing before the Reality Machine's switch, Mishima understood quietly. This was not "manufacturing Reality." This was "the <em class="h">rediscovery</em> of Reality." This universe had been manufactured by someone from the very beginning — long ago, far away. And that "someone" was now <em class="h">Mishima herself</em>. Time has no direction. Her past self had been living in a universe created by her future self. Within that circle, there is neither beginning nor end.</div>
+    <div class="rev">
+      <div class="shard" style="top:38%;left:4%;width:42%;animation-delay:0s;"></div>
+      <div class="shard" style="top:55%;right:2%;width:58%;animation-delay:1.2s;transform:rotate(-3deg);"></div>
+      <div class="shard" style="top:68%;left:18%;width:35%;animation-delay:2.4s;transform:rotate(1.5deg);"></div>
+      <span class="rsym" id="sym-real">REALITY</span>
+    </div>
+    <div class="co real t-ja">[REALITY — 最終ログ]<br>リアリティポイント: 1<br>──<br>現実の書き換え、開始。<br>三島遥の観測記録：消去<br>三島遥の存在記録：<em style="color:var(--real)">宇宙の基底パラメータに統合</em></div>
+    <div class="co real t-en">[REALITY — FINAL LOG]<br>Reality Points: 1<br>──<br>Rewriting of reality: initiated.<br>Haruka Mishima — observation records: erased<br>Haruka Mishima — existence records: <em style="color:var(--real)">integrated into base parameters of the universe</em></div>
+    <div class="sep">· · · · · · · · ·</div>
+  </div>
+
+  <div class="epi er chapter" id="a3ep">
+    <p class="epi-q t-ja" style="color:#ffe8d8;text-shadow:0 0 24px var(--real),0 0 48px #ff664433;">「現実とは、あなたが覚えていない夢の中で<br>あなた自身が設計した舞台である」</p>
+    <p class="epi-q t-en" style="color:#ffe8d8;text-shadow:0 0 24px var(--real),0 0 48px #ff664433;">"Reality is the stage you designed yourself<br>in a dream you no longer remember."</p>
+    <p class="epi-cr t-ja" style="display:block">── <span class="enxt" style="color:var(--cel)">第四部へ続く / ARC IV →</span> ──</p>
+    <p class="epi-cr t-en" style="display:block">── <span class="enxt" style="color:var(--cel)">Continues in Arc IV →</span> ──</p>
+  </div>
+</div><!-- /arc3 -->
+
+<!-- ══════════════════════════════════════════
+     ARC 4: CELESTIALS
+══════════════════════════════════════════ -->
+<div class="arc-panel" id="arc4">
+  <div class="arc-title-block">
+    <p class="eyebrow ey-cel">ANTIMATTER DIMENSIONS — COSMIC HORROR</p>
+    <h2 class="ah ah-cel t-ja">星神たちの審判</h2>
+    <h2 class="ah ah-cel t-en">The Judgment of the Celestials</h2>
+    <p class="tsub"><span class="t-ja">第四部：天体</span><span class="t-en">ARC IV — CELESTIALS</span></p>
+    <div class="tdiv td-cel"></div>
+  </div>
+
+  <!-- CH.17 Teresa -->
+  <div class="chapter" id="a4c17">
+    <div class="ch-head"><span class="ch-num">CH.17</span><div class="ch-line cl-cel"></div><span class="ch-badge" style="color:#ffdd88;border-color:#ffdd88;">TERESA</span></div>
+    <div class="prose in t-ja">リアリティの深部には、<em class="c">天体</em>たちが待っていた。</div>
+    <div class="prose t-en">In the depths of Reality, the <em class="c">Celestials</em> were waiting.</div>
+    <div class="prose in t-ja">彼らは「ゲームのボス」ではなかった。彼らは、過去に同じ実験を行い、同じ道を辿り、そして宇宙と融合した存在たちだった。七つの天体。それぞれが宇宙の特定の側面を支配し、「次の段階」へ向かう者の前に、試練として現れる。</div>
+    <div class="prose t-en">They were not "bosses in a game." They were beings who had once conducted the same experiment, followed the same path, and merged with the universe. Seven Celestials. Each governing a specific aspect of the universe, appearing as ordeals before whoever advances to the next stage.</div>
+    <div class="prose in t-ja">最初の天体は<em class="c">テレサ</em>だった。</div>
+    <div class="prose t-en">The first Celestial was <em class="c">Teresa</em>.</div>
+    <div class="prose in t-ja">加速器の深部で、反物質の流れが突然パターンを持ち始めた。規則的な波動。三島はそれを三週間かけて解析した。それはコードだった。あるいはコードに似た何かだった。意味を持つ構造が、反物質の流れに<em class="h">刻み込まれていた</em>。翻訳された内容は、三行だった。</div>
+    <div class="prose t-en">Deep within the accelerator, the flow of antimatter suddenly began forming patterns. Regular waves. Mishima spent three weeks decoding them. It was code — or something resembling it. Structures with meaning had been <em class="h">carved into the flow of antimatter</em>. The translated content was three lines.</div>
+    <div class="co eter t-ja">「私はかつてあなたと同じ場所に立っていた。<br>私は現実を製造した。<br>そして現実に<em class="r">飲み込まれた</em>」</div>
+    <div class="co eter t-en">"I once stood where you stand now.<br>I manufactured Reality.<br>And Reality <em class="r">consumed me</em>."</div>
+    <div class="prose in t-ja">三島はメッセージを送り返した。「あなたは今、何を感じているか」と。返答が来るまで四秒かかった。体感では四年に感じられた。</div>
+    <div class="prose t-en">Mishima sent a message back. "What do you feel now?" It took four seconds for the reply. It felt like four years.</div>
+    <div class="co real t-ja">「<em class="r">すべて</em>。宇宙のすべての粒子の質量を。すべての星の温度を。すべての命の持続時間を。私は、同時に、感じている。<br>これが<em style="color:var(--red)">苦しみ</em>なのか<em style="color:var(--real)">歓喜</em>なのかは、もはや区別できない」</div>
+    <div class="co real t-en">"<em class="r">Everything</em>. The mass of every particle in the universe. The temperature of every star. The duration of every life. I feel them all, simultaneously.<br>Whether this is <em style="color:var(--red)">suffering</em> or <em style="color:var(--real)">ecstasy</em> — I can no longer distinguish."</div>
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.18 Effarig -->
+  <div class="chapter" id="a4c18a">
+    <div class="ch-head"><span class="ch-num">CH.18</span><div class="ch-line cl-cel"></div><span class="ch-badge" style="color:#ff88cc;border-color:#ff88cc;">EFFARIG</span></div>
+
+    <div class="prose in t-ja">テレサとの対話から三日後、三島は自分の研究ノートを開いた。そして、手が止まった。</div>
+    <div class="prose t-en">Three days after the dialogue with Teresa, Mishima opened her research notebook. Her hand stopped.</div>
+
+    <div class="prose in t-ja">昨日まで確かにそこにあったはずの文章が、変わっていた。単語が入れ替わっている。文の構造が違う。しかし最も恐ろしいのは、書き換えられた文章が、元の文章よりも<em class="h">正確だった</em>ということだ。三島が書きたかったが書けなかったこと、言語化できずに諦めていた観察の核心が、そのページには整然と記されていた。</div>
+    <div class="prose t-en">The sentences she had certainly written the day before had changed. Words were transposed. Structures were different. But the most terrifying thing was that the rewritten text was <em class="h">more accurate</em> than the original. What Mishima had wanted to write but couldn't — the core of observations she had abandoned because they resisted language — was set down on those pages with perfect clarity.</div>
+
+    <div class="prose in t-ja">壁に貼った観測データの印刷物も変わっていた。廊下の掲示板の文字も変わっていた。施設全体のあらゆる「書かれたもの」が、少しずつ、しかし確実に書き換えられていた。それは破壊ではなかった。改善だった。だからこそ<em class="h">気味が悪かった</em>。</div>
+    <div class="prose t-en">The printed observation data on the walls had changed. The text on the corridor noticeboards had changed. Every "written thing" throughout the facility was being rewritten, gradually but certainly. It was not destruction. It was improvement. And that was precisely what made it <em class="h">so deeply wrong</em>.</div>
+
+    <div class="co ter t-ja">[研究ノート — 三島遥, 書き換え後のページより]<br><br>元の文: 「時空歪み係数の異常を確認した。原因不明。」<br>書き換え後: 「時空歪み係数の異常は、観測者自身の存在が宇宙に与える干渉の反射である。<em style="color:var(--red)">観測することと、観測されることは、同一の行為だ</em>」<br><br>──この文章を、私は書いていない。<br>──しかし、私が<em style="color:var(--red)">書くべきだった</em>文章だ。</div>
+    <div class="co ter t-en">[Research Notebook — H. Mishima, from rewritten pages]<br><br>Original: "Confirmed anomaly in spacetime distortion coefficient. Cause unknown."<br>Rewritten: "The spacetime distortion anomaly is the reflected interference of the observer's own existence upon the universe. <em style="color:var(--red)">To observe and to be observed are the same act.</em>"<br><br>── I did not write this.<br>── And yet it is what <em style="color:var(--red)">I should have written</em>.</div>
+
+    <div class="prose in t-ja">三島は端末に向かい、タイプした。「誰がこれを書いているのか」</div>
+    <div class="prose t-en">Mishima turned to the terminal and typed: "Who is writing this?"</div>
+
+    <div class="prose in t-ja">返答はなかった。代わりに、三島が今タイプしたばかりのその文章が、静かに書き換えられた。</div>
+    <div class="prose t-en">No reply came. Instead, the sentence Mishima had just typed was quietly rewritten.</div>
+
+    <div class="co t-ja" style="border-left-color:#ff88cc;background:linear-gradient(135deg,#ff88cc15,transparent);color:#ffccee;text-shadow:0 0 8px #ff88cc;">「誰が書いているのか、ではない。<br>あなたがいつか<em style="color:#ff88cc">書くことになる</em>文章を、私が先に書いている」<br><br>── EFFARIG</div>
+    <div class="co t-en" style="border-left-color:#ff88cc;background:linear-gradient(135deg,#ff88cc15,transparent);color:#ffccee;text-shadow:0 0 8px #ff88cc;">"The question is not who is writing.<br>I am writing in advance the sentences<br>you will <em style="color:#ff88cc">eventually write yourself</em>."<br><br>── EFFARIG</div>
+
+    <div class="prose in t-ja">三島はノートを閉じた。しかし閉じた瞬間、今まさに自分が考えていたこと――「この天体は怖い」という思考が、次のページに、<em class="h">すでに書かれていた</em>ことを、彼女は知っていた。</div>
+    <div class="prose t-en">Mishima closed the notebook. But as she did, she knew that what she had just been thinking — "this Celestial frightens me" — was <em class="h">already written</em> on the next page.</div>
+
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.19 The Nameless Ones -->
+  <div class="chapter" id="a4c18b">
+    <div class="ch-head"><span class="ch-num">CH.19</span><div class="ch-line cl-cel"></div><span class="ch-badge" style="color:#aaaaaa;border-color:#aaaaaa;">THE NAMELESS ONES</span></div>
+
+    <div class="prose in t-ja">それは月曜日の朝に始まった。</div>
+    <div class="prose t-en">It began on a Monday morning.</div>
+
+    <div class="prose in t-ja">三島が施設に出勤すると、廊下で同僚とすれ違った。「おはよう」と言った。同僚は振り返らなかった。振り返らなかったのではなく、<em class="h">聞こえていなかった</em>。三島の声は、同僚の時間軸に届いていなかった。</div>
+    <div class="prose t-en">When Mishima arrived at the facility, she passed a colleague in the corridor. "Good morning," she said. The colleague didn't turn around — not because she chose not to, but because she <em class="h">hadn't heard it</em>. Mishima's voice had not reached the colleague's timeline.</div>
+
+    <div class="prose in t-ja">三島は自分の腕時計を見た。時計は正常に動いていた。壁の時計も正常だった。しかし施設内の全員が、三島より<em class="h">わずかに未来</em>を生きていた。コンマ数秒の差。しかしその差は縮まらなかった。</div>
+    <div class="prose t-en">Mishima looked at her wristwatch. It was running normally. The wall clock was normal too. Yet everyone in the facility was living <em class="h">a fraction of a second in Mishima's future</em>. A difference of tenths of a second. But the gap didn't close.</div>
+
+    <div class="prose in t-ja">これが「名もなき者たち」の試練だと、三島はすぐに理解した。時間を支配する者たちが、三島を時間の流れから少しだけ切り離した。世界は見えている。声も聞こえる。しかし誰も三島の言葉に応えない。三島の行動が世界に触れるのは、常に<em class="h">誰かが去った後</em>だ。</div>
+    <div class="prose t-en">This was the ordeal of the Nameless Ones, Mishima understood immediately. The beings who govern time had cut her slightly loose from the current of time. She could see the world. She could hear voices. But nobody responded to her words. Mishima's actions reached the world always <em class="h">after someone had already left</em>.</div>
+
+    <div class="co ter t-ja">[三島遥 — 個人記録, 時間切離し 3日目]<br><br>食事をしようとすると、食堂のテーブルは常に片付けられた後だ。<br>ドアを開けようとすると、誰かが今まさに閉めたところだ。<br>助けを求めて手を伸ばすと、相手はコンマ5秒前にそこから立ち去っている。<br><br>世界は私を<em style="color:var(--red)">避けているのではない</em>。<br>世界は私より<em style="color:var(--red)">少しだけ先を歩いている</em>だけだ。<br>それが、これほどまでに<em style="color:var(--red)">孤独だとは思わなかった</em>。</div>
+    <div class="co ter t-en">[H. Mishima — Personal Record, Day 3 of temporal displacement]<br><br>When I try to eat, the cafeteria table has just been cleared.<br>When I reach for a door, someone has just this moment closed it.<br>When I reach out for help, the person has stepped away 0.5 seconds ago.<br><br>The world is not <em style="color:var(--red)">avoiding me</em>.<br>The world is simply <em style="color:var(--red)">walking a little ahead of me</em>.<br>I did not realize that could feel <em style="color:var(--red)">this lonely</em>.</div>
+
+    <div class="prose in t-ja">七日目の夜、三島は加速器の制御室で、端末に向かってタイプし続けた。誰も見ていない。誰も気づかない。しかし三島は、タイプすることをやめなかった。なぜなら彼女は知っていたから。名もなき者たちは「観察している」。そして彼らが観察しているということは、彼らにとって三島は<em class="h">まだ存在している</em>ということだ。</div>
+    <div class="prose t-en">On the seventh night, Mishima sat at a terminal in the accelerator control room and kept typing. Nobody was watching. Nobody noticed. But Mishima didn't stop. Because she knew: the Nameless Ones were observing. And the fact that they were observing meant that, to them, Mishima <em class="h">still existed</em>.</div>
+
+    <div class="prose in t-ja">朝、時間のずれは消えていた。同僚が「おはよう」と言った。三島は返事をしながら、気づいた。試練の目的は「孤独に耐えること」ではなかった。「それでも存在し続けること」だったのだと。</div>
+    <div class="prose t-en">In the morning, the temporal displacement was gone. A colleague said "good morning." Mishima replied, and understood: the ordeal's purpose had not been "to endure loneliness." It had been "to continue existing regardless."</div>
+
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.20 V -->
+  <div class="chapter" id="a4c18c">
+    <div class="ch-head"><span class="ch-num">CH.20</span><div class="ch-line cl-cel"></div><span class="ch-badge" style="color:#44ffff;border-color:#44ffff;">V</span></div>
+
+    <div class="prose in t-ja">「V」からの接触は、最も静かで、最も残酷だった。</div>
+    <div class="prose t-en">The contact from "V" was the quietest and the most cruel.</div>
+
+    <div class="prose in t-ja">ある夜、三島の端末に、メッセージではなくファイルが届いた。ファイル名は「MISHIMA_H_COMPLETE.arc」。圧縮された記録ファイルだった。開くと、そこには三島の人生の全記録があった。</div>
+    <div class="prose t-en">One night, a file arrived on Mishima's terminal — not a message, a file. Its name was "MISHIMA_H_COMPLETE.arc." A compressed archive. When she opened it, she found a complete record of her life.</div>
+
+    <div class="prose in t-ja">誕生から現在まで。呼吸の回数。まばたきの回数。口にした言葉の総数。交わした視線の数。抱いた疑問のすべて。諦めたことのすべて。夢の中で見た光景のすべて。三島が自分でも忘れていた記憶が、完璧な精度で記録されていた。七歳の春に拾って、名前をつけて、翌朝死んでいた野良猫のことまで。</div>
+    <div class="prose t-en">From birth to the present moment. Number of breaths taken. Number of blinks. Total words spoken. Glances exchanged. Every question ever entertained. Everything ever given up on. Every scene ever seen in dreams. Memories Mishima herself had forgotten were recorded with perfect fidelity. Including the stray cat she had found in the spring of her seventh year, given a name, and found dead the next morning.</div>
+
+    <div class="co t-ja" style="border-left-color:#44ffff;background:linear-gradient(135deg,#44ffff15,transparent);color:#aaffff;text-shadow:0 0 8px #44ffff;">MISHIMA_H_COMPLETE.arc<br><br>総記録項目数: 847,291,034,771<br>うち「達成」に分類されるもの: 12<br>うち「未達成」に分類されるもの: 847,291,034,759<br><br>── V: 「記録は完全だ。<em style="color:#44ffff">あなたは十分に生きた</em>」</div>
+    <div class="co t-en" style="border-left-color:#44ffff;background:linear-gradient(135deg,#44ffff15,transparent);color:#aaffff;text-shadow:0 0 8px #44ffff;">MISHIMA_H_COMPLETE.arc<br><br>Total records: 847,291,034,771<br>Classified as "achievements": 12<br>Classified as "not achieved": 847,291,034,759<br><br>── V: "The record is complete. <em style="color:#44ffff">You have lived enough</em>."</div>
+
+    <div class="prose in t-ja">三島は長い間、その数字を見つめた。八千四百七十二億以上の「未達成」。そして十二の「達成」。Vはそれを「十分」と言った。</div>
+    <div class="prose t-en">Mishima stared at the numbers for a long time. Over 847 billion "not achieved." And twelve "achievements." V had called it "enough."</div>
+
+    <div class="prose in t-ja">怒りを感じた。しかし同時に、奇妙な解放感もあった。未達成の数がどれほど膨大でも、Vはそれを「足りない」とは言わなかった。記録は記録だ。達成も未達成も、等しく保存される。どんな些細な瞬間も、どんな失敗も、<em class="h">消えずにここにある</em>。</div>
+    <div class="prose t-en">She felt anger. But simultaneously, a strange sense of release. No matter how vast the number of "not achieved," V had not called it "insufficient." Records are records. Achievements and failures alike are preserved equally. Every trivial moment, every failure — <em class="h">nothing disappears, it is all here</em>.</div>
+
+    <div class="prose in t-ja">翌朝、ファイルは消えていた。しかし三島は、野良猫の名前を思い出していた。「コペルニクス」。七歳の自分がつけた、少し大げさな名前を。</div>
+    <div class="prose t-en">The next morning, the file was gone. But Mishima remembered the stray cat's name. "Copernicus." The slightly grandiose name her seven-year-old self had given it.</div>
+
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.21 Ra -->
+  <div class="chapter" id="a4c18d">
+    <div class="ch-head"><span class="ch-num">CH.21</span><div class="ch-line cl-cel"></div><span class="ch-badge" style="color:#ff8800;border-color:#ff8800;">RA</span></div>
+
+    <div class="prose in t-ja">ラーは、言葉を使わなかった。代わりに、<em class="h">人を使った</em>。</div>
+    <div class="prose t-en">Ra did not use words. Instead, Ra used <em class="h">a person</em>.</div>
+
+    <div class="prose in t-ja">ある朝、三島が制御室に入ると、見知らぬ人物が椅子に座っていた。正確には、見知らぬ人物ではなかった。顔は知っている。しかし名前が思い出せなかった。その人物は古い作業着を着ていて、壁の計器をじっと見つめていた。三島が「誰ですか」と尋ねると、その人物はゆっくりと振り向いた。</div>
+    <div class="prose t-en">One morning, when Mishima entered the control room, an unfamiliar figure was sitting in a chair. Not entirely unfamiliar — she recognized the face, but couldn't recall the name. The figure wore an old work uniform and was staring intently at the wall instruments. When Mishima asked "who are you," the figure turned slowly.</div>
+
+    <div class="prose in t-ja">顔は、三島よりも十五年ほど年上だった。しかしその目は、三島が鏡で見慣れた目と同じ形をしていた。</div>
+    <div class="prose t-en">The face was about fifteen years older than Mishima. But the eyes had the same shape as the eyes she knew from mirrors.</div>
+
+    <div class="prose in t-ja">「あなたは……」と三島は言いかけた。</div>
+    <div class="prose t-en">"You are—" Mishima started to say.</div>
+
+    <div class="co t-ja" style="border-left-color:#ff8800;background:linear-gradient(135deg,#ff880015,transparent);color:#ffcc88;text-shadow:0 0 8px #ff8800;">「私はあなたの前にここにいた研究員だ。名前はもう関係ない。ラーが私の残影を呼び戻した。伝言がある」<br><br>「やめろ、とは言わない。止められるものではないから。ただ、一つだけ教える」<br><br>「テレサになることは、苦しみではない。しかし<em style="color:#ff8800">孤独だ</em>。宇宙のすべてを感じながら、あなた自身の輪郭が薄れていく。私はその手前で引き返した。だから私はここにいる。残影として」<br><br>「引き返せるうちに引き返せ、とは言わない。それもあなたが決めることだ。ただ知っておいてほしかった」</div>
+    <div class="co t-en" style="border-left-color:#ff8800;background:linear-gradient(135deg,#ff880015,transparent);color:#ffcc88;text-shadow:0 0 8px #ff8800;">"I am the researcher who was here before you. The name no longer matters. Ra called back my echo. I have a message."<br><br>"I won't tell you to stop. It cannot be stopped. But I will tell you one thing."<br><br>"Becoming Teresa is not suffering. But it is <em style="color:#ff8800">lonely</em>. As you feel all of the universe, the edges of yourself grow thin. I turned back just before that point. That is why I am here. As an echo."<br><br>"I won't say turn back while you still can. That too is for you to decide. I only wanted you to know."</div>
+
+    <div class="prose in t-ja">三島は、何も言えなかった。残影は椅子から立ち上がり、計器に向かって一歩踏み出した瞬間、霧のように消えた。椅子には古い手帳が残っていた。表紙に名前が書いてあったが、インクが滲んで読めなかった。三島は手帳を開かなかった。開けば、自分の未来の筆跡が残っている気がして。</div>
+    <div class="prose t-en">Mishima couldn't say anything. The echo rose from the chair, took one step toward the instruments, and dissolved like mist. On the chair, an old notebook remained. A name was written on the cover, but the ink had bled and was illegible. Mishima didn't open it. She had the feeling that if she did, she would find her own future handwriting inside.</div>
+
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.22 Lai'tela -->
+  <div class="chapter" id="a4c18e">
+    <div class="ch-head"><span class="ch-num">CH.22</span><div class="ch-line cl-cel"></div><span class="ch-badge" style="color:#cc44ff;border-color:#cc44ff;">LAI'TELA</span></div>
+
+    <div class="prose in t-ja">ライ・テラとの遭遇は、遭遇と呼べるものではなかった。なぜなら、<em class="h">三島はそれを経験した後、経験した事実を覚えていなかった</em>からだ。</div>
+    <div class="prose t-en">The encounter with Lai'tela was not something that could be called an encounter. Because <em class="h">after Mishima experienced it, she had no memory of having experienced it</em>.</div>
+
+    <div class="prose in t-ja">三島が気づいたのは、間接的な証拠からだった。ある朝起きると、手に小さな擦り傷があった。前日の記憶はある。しかし前日の夕方から、朝目覚めるまでの十一時間が、完全に抜け落ちていた。夢を見た形跡もなかった。ただ、<em class="h">存在しない時間があった</em>。</div>
+    <div class="prose t-en">Mishima became aware of it through indirect evidence. One morning she woke to find a small scratch on her hand. She had memories of the previous day. But eleven hours — from the previous evening to when she woke — had vanished completely. No trace of dreams. Simply, <em class="h">a stretch of time that did not exist</em>.</div>
+
+    <div class="prose in t-ja">監視カメラの映像を確認した。そこには三島が映っていた。普通に行動していた。夕食を食べ、シャワーを浴び、端末に何かを入力し、眠った。映像には何も異常がなかった。ただ、映像の中の三島の表情だけが、三島には他人のように見えた。無表情ではなかった。何かを、<em class="h">完全に理解した者の顔</em>をしていた。</div>
+    <div class="prose t-en">She checked the security camera footage. There was Mishima. Acting normally. She ate dinner, showered, typed something at the terminal, went to sleep. Nothing anomalous in the footage. Only the expression on the Mishima in the footage looked, to Mishima, like a stranger's face. Not expressionless. It was the face of someone who had <em class="h">completely understood something</em>.</div>
+
+    <div class="prose in t-ja">端末のログを見ると、その十一時間の間に、三島は何かを入力していた。ファイルを開くと、中は空だった。ただしファイルの作成日時は、その消えた時間帯のものだった。ファイル名は「DELETED.txt」。</div>
+    <div class="prose t-en">Checking the terminal logs, Mishima found that during those eleven hours, she had typed something. She opened the file. It was empty. But the file's creation timestamp fell within the missing hours. Its name was "DELETED.txt."</div>
+
+    <div class="co t-ja" style="border-left-color:#cc44ff;background:linear-gradient(135deg,#cc44ff15,transparent);color:#ddaaff;text-shadow:0 0 8px #cc44ff;">DELETED.txt<br><br>[このファイルの内容は、あなたが安全に知ることのできる情報の範囲を超えています]<br><br>[ただし、あなたはすでにその内容を知っています]<br><br>[そしてあなたは、知ったことを<em style="color:#cc44ff">忘れることを選びました</em>]<br><br>── LAI'TELA</div>
+    <div class="co t-en" style="border-left-color:#cc44ff;background:linear-gradient(135deg,#cc44ff15,transparent);color:#ddaaff;text-shadow:0 0 8px #cc44ff;">DELETED.txt<br><br>[The contents of this file exceed the range of information<br>you can safely know]<br><br>[However, you already know its contents]<br><br>[And you have <em style="color:#cc44ff">chosen to forget what you learned</em>]<br><br>── LAI'TELA</div>
+
+    <div class="prose in t-ja">三島は長い間そのファイルを見つめた。思い出そうとした。何も出てこなかった。ただ、思い出そうとするたびに、胸の奥に、ある感情だけが残った。恐怖でも悲しみでもなかった。どちらかというと、嵐の前夜のような、静かで、巨大な、<em class="h">覚悟</em>だった。</div>
+    <div class="prose t-en">Mishima stared at the file for a long time. She tried to remember. Nothing came. Only, each time she tried, a single emotion remained at the back of her chest. Not fear. Not grief. Something closer to the night before a storm — quiet, immense, <em class="h">resolve</em>.</div>
+
+    <div class="prose in t-ja">翌日から、三島はペルに会う準備を始めた。</div>
+    <div class="prose t-en">The following day, Mishima began preparing to meet Pelle.</div>
+
+    <div class="sep">· · · · ·</div>
+  </div>
+
+  <!-- CH.23 Pelle (旧CH.19) -->
+  <div class="chapter" id="a4c19">
+    <div class="ch-head"><span class="ch-num">CH.23</span><div class="ch-line cl-cel"></div><span class="ch-badge" style="color:var(--real);border-color:var(--real);">PELLE — THE END</span></div>
+    <div class="prose in t-ja">最後の天体「ペル」は、言葉を使わなかった。</div>
+    <div class="prose t-en">The final Celestial, Pelle, used no words.</div>
+    <div class="prose in t-ja">ただ、リアリティマシンのスイッチの前に立ち、三島を見た。その目は人間の目ではなかった。かつて人間だったものが宇宙と完全に融合した後に残る、<em class="h">宇宙が意識を持つとしたらこういう目をするだろう</em>という目だった。彼の周囲では、現実の断片が剥がれ落ちていた。壁の一部が、床の一角が、重力の法則が、因果律が、<em class="h">ペルの存在に押しつぶされて崩れていた</em>。</div>
+    <div class="prose t-en">He simply stood before the switch of the Reality Machine and looked at Mishima. Those eyes — not human. They were what remains after something that was once human fully merges with the universe. The eyes that a <em class="h">universe would have, if the universe had consciousness</em>. Around him, fragments of reality were peeling away. Part of the wall, a section of the floor, the laws of gravity, the principle of causality — all were <em class="h">crumbling under the weight of Pelle's existence</em>.</div>
+    <div class="prose in t-ja">三島はペルに一つだけ聞いた。「あなたは今、何者ですか」</div>
+    <div class="prose t-en">Mishima asked Pelle one question. "What are you now?"</div>
+    <div class="prose in t-ja">ペルは答えた。言葉でなく、反物質の流れのパターンで。それを翻訳するのに、コンピュータは量子誤差と戦いながら七分間かかった。</div>
+    <div class="prose t-en">Pelle answered. Not with words — with patterns in the flow of antimatter. The computer, fighting through quantum error, took seven minutes to translate it.</div>
+    <div class="co real t-ja">「私は<em class="r">終わり</em>だ。しかし終わりとは、始まりの別名だ。あなたが私を倒したとき、私はあなたになる。あなたが私になったとき、あなたは誰かを待ち始める。その誰かとは、かつてのあなた自身だ。円環は閉じている。<em style="color:var(--red)">出口はない</em>。しかし出口を必要としないとき、それは牢獄ではなく、<em style="color:var(--real)">宇宙そのもの</em>だ」</div>
+    <div class="co real t-en">"I am <em class="r">the end</em>. But the end is another name for the beginning. When you defeat me, I become you. When you become me, you begin to wait for someone. That someone is what you once were. The circle is closed. <em style="color:var(--red)">There is no exit</em>. But when you no longer need an exit, it is not a prison — it is <em style="color:var(--real)">the universe itself</em>."</div>
+    <div class="rev">
+      <div class="shard" style="top:30%;left:2%;width:50%;animation-delay:0s;"></div>
+      <div class="shard" style="top:50%;right:2%;width:50%;animation-delay:.8s;transform:rotate(-2deg);"></div>
+      <div class="shard" style="top:70%;left:10%;width:40%;animation-delay:1.6s;transform:rotate(1deg);"></div>
+      <div class="shard" style="top:40%;left:30%;width:30%;animation-delay:2.4s;transform:rotate(3deg);"></div>
+      <span class="rsym" id="sym-cel">CELESTIAL</span>
+    </div>
+    <div class="prose in t-ja" style="margin-top:32px;">三島はスイッチを入れた。</div>
+    <div class="prose t-en" style="margin-top:32px;">Mishima threw the switch.</div>
+    <div class="prose in t-ja">光が満ちた。それは白ではなかった。すべての色の光が同時に存在することで生まれる、<em class="h">色という概念を超えた何か</em>だった。三島の意識が広がった。施設が見えた。施設を包む地球が見えた。地球を含む太陽系が、銀河が、局部銀河群が、宇宙の大規模構造が。それらすべてが、一粒の反物質と同じ大きさに見えた。</div>
+    <div class="prose t-en">Light filled everything. Not white — something born from all colors existing simultaneously, <em class="h">beyond the concept of color itself</em>. Mishima's consciousness expanded. She saw the facility. She saw the Earth encasing it. The solar system. The galaxy. The local group. The large-scale structure of the universe. All of it appeared the same size as a single particle of antimatter.</div>
+    <div class="prose in t-ja">そして彼女は理解した。</div>
+    <div class="prose t-en">And she understood.</div>
+    <div class="prose in t-ja">宇宙の最底層にある<em class="v">第一次元</em>。その揺らぎから反物質を「引き抜く」。それが始まりだった。しかし今、三島は宇宙の全構造と融合しながら気づいた。その「揺らぎ」とは何か。</div>
+    <div class="prose t-en">The <em class="v">First Dimension</em> at the deepest layer of the universe. Extracting antimatter from its fluctuations. That was how it began. But now, merging with the entire structure of the universe, Mishima understood. What were those "fluctuations"?</div>
+    <div class="prose in t-ja"><em class="h">それは、はるか未来の自分が、宇宙の底から反物質を引き抜こうとしているときに生まれる歪みだった。</em></div>
+    <div class="prose t-en"><em class="h">They were the distortions created by her own far-future self, reaching down through the bottom of the universe to extract antimatter.</em></div>
+    <div class="prose in t-ja">施設の最初の朝、三島が計測ログで発見した「時空の歪み」は、三島が宇宙と融合した瞬間に彼女自身が生み出したものだった。</div>
+    <div class="prose t-en">The "spacetime distortion" Mishima had discovered in the measurement logs on the facility's first morning — she had generated it herself, at the moment of her merger with the universe.</div>
+    <div class="prose in t-ja">円環は、閉じた。</div>
+    <div class="prose t-en">The circle closed.</div>
+    <div class="sep">· · · · · · · · ·</div>
+  </div>
+
+  <!-- UNLOCK TRIGGER: when this block enters view, ARC V tab appears -->
+  <div class="epi ec chapter" id="a4ep">
+    <p class="epi-q t-ja" style="color:#fff8cc;text-shadow:0 0 24px var(--cel),0 0 48px #ffcc4433;">「あなたが最初に感じた『違和感』は、<br>あなた自身が遙か未来から送り込んだ<br><em style="color:var(--cel)">警告</em>だった」</p>
+    <p class="epi-q t-en" style="color:#fff8cc;text-shadow:0 0 24px var(--cel),0 0 48px #ffcc4433;">"The wrongness you felt from the very beginning<br>was a <em style="color:var(--cel)">warning</em><br>sent by yourself from the far future."</p>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.25em;margin-bottom:20px;text-align:center;">— TERESA, formerly HARUKA MISHIMA —</p>
+    <p class="epi-cr" style="display:block;text-align:center;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.28em;line-height:2;color:var(--txd)">
+      BASED ON THE GAME BY HEVIPELLE<br>
+      ANTIMATTER DIMENSIONS — COSMIC HORROR<br>
+      <span style="color:var(--cel);text-shadow:0 0 8px var(--cel)">COMPLETE — ALL FOUR ARCS</span>
+    </p>
+    <!-- hidden hint shown after unlock -->
+    <p id="arc5-hint" style="display:none;margin-top:28px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--loop);letter-spacing:.25em;text-align:center;animation:ep5hint 2s ease-in-out infinite;">
+      <span class="t-ja">▼ エピローグが解放されました ▼</span>
+      <span class="t-en">▼ EPILOGUE UNLOCKED ▼</span>
+    </p>
+  </div>
+</div><!-- /arc4 -->
+
+<!-- ══════════════════════════════════════════
+     ARC 5: EPILOGUE — THE NIGHT BEFORE
+══════════════════════════════════════════ -->
+<div class="arc-panel" id="arc5">
+  <div class="arc-title-block">
+    <p class="eyebrow" style="color:var(--loop);text-shadow:0 0 20px #ff883344;">ANTIMATTER DIMENSIONS — COSMIC HORROR</p>
+    <h2 class="ah t-ja" style="color:#fff0e0;text-shadow:0 0 28px var(--loop),0 0 56px #ff883344;">前日</h2>
+    <h2 class="ah t-en" style="color:#fff0e0;text-shadow:0 0 28px var(--loop),0 0 56px #ff883344;">The Night Before</h2>
+    <p class="tsub"><span class="t-ja">エピローグ：円環</span><span class="t-en">EPILOGUE — THE CIRCLE</span></p>
+    <div class="tdiv" style="background:linear-gradient(to bottom,transparent,var(--loop),transparent);">
+      <style>.tdiv-loop::after{content:'○';color:var(--loop);text-shadow:0 0 12px var(--loop);animation:pulse 4s ease-in-out infinite;}</style>
+    </div>
+  </div>
+
+  <div class="chapter vis" id="a5c0">
+    <div class="ch-head">
+      <span class="ch-num" style="color:var(--loop);">EPILOGUE</span>
+      <div class="ch-line" style="background:linear-gradient(90deg,var(--loop)44,transparent);"></div>
+      <span class="ch-badge" style="color:var(--d1);border-color:var(--d1);">THE NIGHT BEFORE</span>
+    </div>
+
+    <div class="prose in t-ja">三島遥は、段ボール箱をもう一つ開けた。</div>
+    <div class="prose t-en">Haruka Mishima opened another cardboard box.</div>
+
+    <div class="prose in t-ja">新居のフローリングには、まだ段ボールが六箱残っていた。台所の食器は片付いた。本棚も組み立てた。あとは細々としたものたちを、どこに置くかを決めるだけだ。窓の外では、知らない街の夜が静かに広がっていた。</div>
+    <div class="prose t-en">Six more boxes remained on the floor of her new apartment. The kitchen dishes were unpacked. The bookshelf was assembled. All that was left was deciding where to put the small things. Outside the window, the night of an unfamiliar city spread quietly around her.</div>
+
+    <div class="prose in t-ja">新しい職場は、明日からだ。粒子物理学の研究施設。専門は反陽子の精製技術。三島にとっては理想的なポストだった。給与もいい。チームの評判もいい。何より、研究テーマが面白い。宇宙の基底構造から反物質を引き出す実験。そんな実験が、世界のどこかでもう始まっているとも聞く。三島は自分たちが最先端にいると感じていた。</div>
+    <div class="prose t-en">The new job started tomorrow. A particle physics research facility. Her specialty: antiproton refinement. It was an ideal position for Mishima. Good salary. Good reputation for the team. And above all, the research itself was fascinating — experiments to extract antimatter from the fundamental structure of the universe. She had heard that similar experiments were already beginning somewhere in the world. Mishima felt they were at the frontier.</div>
+
+    <div class="prose in t-ja">少し疲れたので、床に座って缶ビールを開けた。スマートフォンで明日の天気を確認した。晴れ。通勤ルートをもう一度確認した。電車で二十分。悪くない。</div>
+    <div class="prose t-en">Tired, she sat down on the floor and opened a can of beer. She checked tomorrow's weather on her phone. Clear skies. She confirmed the commute route one more time. Twenty minutes by train. Not bad.</div>
+
+    <div class="prose in t-ja">充実した生活が始まりそうだった。そう、自分に言い聞かせた。</div>
+    <div class="prose t-en">A fulfilling life seemed to be beginning. She told herself so.</div>
+
+    <div class="prose in t-ja">ただ、昨日から、なんとなく落ち着かない気持ちがあった。不安というほどのものでもないが、胸の奥に小さなしこりのような感覚。引越しのせいだろうと思った。知らない街、知らない部屋、明日からの新しい生活。慣れない環境に対する自然な緊張感だ。そういうことにした。</div>
+    <div class="prose t-en">Only, since yesterday, she had felt vaguely unsettled. Not quite anxiety — more like a small knot lodged at the back of her chest. She figured it was the move. A new city, an unfamiliar room, a new life beginning tomorrow. Natural tension toward an unfamiliar environment. She decided that was what it was.</div>
+
+    <div class="prose in t-ja">科学者の性分で、三島はその感覚を少し分析してみた。原因として考えられるもの：新しい人間関係への緊張、新しい研究環境への期待と不安、引越し作業の疲労。どれかが正しいか、あるいはその複合か。いずれにしても、時間が解決する類のものだ。</div>
+    <div class="prose t-en">With the habits of a scientist, Mishima analyzed the feeling briefly. Possible causes: tension over new relationships, the mix of anticipation and unease toward a new research environment, fatigue from the move. One of these, or a combination. In any case, the sort of thing time would resolve.</div>
+
+    <div class="prose in t-ja">ビールを半分飲んで、もう一つ段ボールを開けた。研究用のノートが何冊か出てきた。まだ一ページも使っていない、新品のノートたち。三島は一冊手に取り、表紙を撫でた。明日から、ここに何かを書き始める。どんなことが書かれていくのだろう、と思った。</div>
+    <div class="prose t-en">She drank half the beer and opened another box. Several research notebooks came out. All brand new, not a single page used. Mishima picked one up and ran her fingers over the cover. Starting tomorrow, she would begin writing something here. She wondered what it would end up containing.</div>
+
+    <div class="prose in t-ja">不思議と、その想像が楽しかった。</div>
+    <div class="prose t-en">Strangely, that thought made her happy.</div>
+
+    <div class="prose in t-ja">窓の外を、鳥が一羽横切った。夜の鳥。こんな時間に飛ぶものか、と思ったが、すぐに忘れた。</div>
+    <div class="prose t-en">A bird crossed the window outside. A night bird. She thought it odd, flying at this hour, but forgot about it almost immediately.</div>
+
+    <div class="prose in t-ja">三島は仰向けに寝転がって、新居の天井を見上げた。白い天井。照明器具の丸い影。</div>
+    <div class="prose t-en">Mishima lay down on her back and looked up at the ceiling of her new apartment. White ceiling. The round shadow of the light fixture.</div>
+
+    <div class="prose in t-ja">目を閉じると、真っ暗な闇の中に、小さな光の点がいくつか見えた気がした。動いているようにも見えた。繋がろうとしているようにも。でもそれは目を閉じた後に残る光のざわめきで、誰にでも起きることだ。そういうことにした。</div>
+    <div class="prose t-en">When she closed her eyes, she thought she could see small points of light scattered in the darkness. They seemed to be moving. Almost as if trying to connect with each other. But that was just the visual noise that lingers after closing your eyes, something that happens to everyone. She decided that was what it was.</div>
+
+    <div class="prose in t-ja">明日の朝、六時に起きる。シャワーを浴びる。コーヒーを淹れる。電車に乗る。施設に着く。同僚に挨拶をする。最初のミーティングがある。それから、研究が始まる。</div>
+    <div class="prose t-en">Tomorrow morning she would wake at six. Shower. Make coffee. Take the train. Arrive at the facility. Greet her colleagues. There would be a first meeting. And then the research would begin.</div>
+
+    <div class="prose in t-ja">三島はそのことを、楽しみにしていた。</div>
+    <div class="prose t-en">Mishima was looking forward to it.</div>
+
+    <div class="prose in t-ja">胸のしこりは、まだそこにあった。でもきっと、明日の朝には消えている。</div>
+    <div class="prose t-en">The knot in her chest was still there. But surely, by tomorrow morning, it would be gone.</div>
+
+    <div class="sep">· · ·</div>
+
+    <div class="prose in t-ja" style="color:var(--txd);font-size:clamp(12px,3vw,14px);">施設の加速器は、翌朝八時三十二分に起動した。</div>
+    <div class="prose t-en" style="color:var(--txd);font-size:clamp(12px,3vw,14px);">The facility's accelerator was activated at 8:32 the following morning.</div>
+
+    <div class="sep">· · · · · · · · ·</div>
+  </div>
+
+  <div class="epi chapter vis" style="border-top:1px solid var(--loop)44;margin-top:72px;padding:52px 0;text-align:center;">
+    <p class="epi-q t-ja" style="color:#fff0e0;text-shadow:0 0 24px var(--loop),0 0 48px #ff883333;">「彼女は、何も知らなかった。<br>何も知らないまま、<br>また<em style="color:var(--d1)">始めた</em>」</p>
+    <p class="epi-q t-en" style="color:#fff0e0;text-shadow:0 0 24px var(--loop),0 0 48px #ff883333;">"She knew nothing.<br>And knowing nothing,<br>she <em style="color:var(--d1)">began again</em>."</p>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.28em;line-height:2;text-align:center;">
+      BASED ON THE GAME BY HEVIPELLE<br>
+      ANTIMATTER DIMENSIONS — COSMIC HORROR<br>
+      <span style="color:var(--loop);text-shadow:0 0 8px var(--loop)">— THE CIRCLE IS COMPLETE —</span>
+    </p>
+  </div>
+</div><!-- /arc5 -->
+
+<!-- BOTTOM TAB BAR -->
+<nav id="tab-bar" role="tablist">
+  <button class="tab-btn is-active" id="tab-arc1" style="--ta:var(--inf)" role="tab" type="button">
+    <span class="tab-label"><span class="t-ja">第一部</span><span class="t-en">ARC I</span></span>
+    <span class="tab-arc">FIRST INFINITY</span>
+  </button>
+  <button class="tab-btn" id="tab-arc2" style="--ta:var(--eter)" role="tab" type="button">
+    <span class="tab-label"><span class="t-ja">第二部</span><span class="t-en">ARC II</span></span>
+    <span class="tab-arc">ETERNITY</span>
+  </button>
+  <button class="tab-btn" id="tab-arc3" style="--ta:var(--real)" role="tab" type="button">
+    <span class="tab-label"><span class="t-ja">第三部</span><span class="t-en">ARC III</span></span>
+    <span class="tab-arc">REALITY</span>
+  </button>
+  <button class="tab-btn" id="tab-arc4" style="--ta:var(--cel)" role="tab" type="button">
+    <span class="tab-label"><span class="t-ja">第四部</span><span class="t-en">ARC IV</span></span>
+    <span class="tab-arc">CELESTIALS</span>
+  </button>
+  <button class="tab-btn" id="tab-arc5" style="--ta:var(--loop);display:none;opacity:0;transition:opacity .6s ease;" role="tab" type="button">
+    <span class="tab-label"><span class="t-ja">終章</span><span class="t-en">EPILOGUE</span></span>
+    <span class="tab-arc">THE CIRCLE</span>
+  </button>
+</nav>
+
+<script>
+/* ══════════════════════════════════════════
+   SETTINGS PANEL (gear button)
+   Safari-safe: addEventListener only, no inline handlers,
+   no classList.toggle(token, force)
+══════════════════════════════════════════ */
+(function() {
+  var gearBtn   = document.getElementById('settings-btn');
+  var panel     = document.getElementById('settings-panel');
+  var backdrop  = document.getElementById('settings-backdrop');
+
+  function openPanel() {
+    panel.classList.add('is-open');
+    backdrop.classList.add('is-open');
+    gearBtn.classList.add('is-open');
+    gearBtn.setAttribute('aria-expanded', 'true');
+    panel.setAttribute('aria-hidden', 'false');
+  }
+  function closePanel() {
+    panel.classList.remove('is-open');
+    backdrop.classList.remove('is-open');
+    gearBtn.classList.remove('is-open');
+    gearBtn.setAttribute('aria-expanded', 'false');
+    panel.setAttribute('aria-hidden', 'true');
+  }
+  function togglePanel() {
+    if (panel.classList.contains('is-open')) { closePanel(); } else { openPanel(); }
+  }
+
+  gearBtn.addEventListener('click', function(e) { e.stopPropagation(); togglePanel(); });
+  backdrop.addEventListener('click', closePanel);
+
+  /* ── LANGUAGE ── */
+  function setLang(lang) {
+    var body = document.body;
+    body.classList.remove('lang-ja');
+    body.classList.remove('lang-en');
+    body.classList.add('lang-' + lang);
+    document.documentElement.setAttribute('lang', lang);
+    var bja = document.getElementById('btn-ja');
+    var ben = document.getElementById('btn-en');
+    if (lang === 'ja') {
+      bja.classList.add('is-active');    ben.classList.remove('is-active');
+    } else {
+      ben.classList.add('is-active');    bja.classList.remove('is-active');
+    }
+    document.title = lang === 'ja'
+      ? '反物質の深淵 — ANTIMATTER DIMENSIONS: COSMIC HORROR'
+      : 'Into the Antimatter Abyss — ANTIMATTER DIMENSIONS: COSMIC HORROR';
+  }
+  document.getElementById('btn-ja').addEventListener('click', function() { setLang('ja'); });
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  // initialize state to match body class (lang-en default)
+  setLang('en');
+
+  /* ── FONT SIZE ── */
+  function setFontSize(size) {
+    var body = document.body;
+    body.classList.remove('fs-sm');
+    body.classList.remove('fs-md');
+    body.classList.remove('fs-lg');
+    body.classList.add('fs-' + size);
+    ['sm','md','lg'].forEach(function(s) {
+      var el = document.getElementById('fs-' + s);
+      if (el) {
+        if (s === size) { el.classList.add('is-active'); }
+        else            { el.classList.remove('is-active'); }
+      }
+    });
+  }
+  // default
+  document.body.classList.add('fs-md');
+  document.getElementById('fs-sm').addEventListener('click', function() { setFontSize('sm'); });
+  document.getElementById('fs-md').addEventListener('click', function() { setFontSize('md'); });
+  document.getElementById('fs-lg').addEventListener('click', function() { setFontSize('lg'); });
+})();
+
+/* ══════════════════════════════════════════
+   ARC TAB SWITCH
+══════════════════════════════════════════ */
+var arcAccents = { arc1: 'var(--inf)', arc2: 'var(--eter)', arc3: 'var(--real)', arc4: 'var(--cel)', arc5: 'var(--loop)' };
+
+function switchArc(arcId) {
+  // Deactivate all panels and tabs
+  document.querySelectorAll('.arc-panel').forEach(function(p) { p.classList.remove('is-active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('is-active'); });
+  // Activate target
+  var panel = document.getElementById(arcId);
+  if (panel) panel.classList.add('is-active');
+  var btn = document.getElementById('tab-' + arcId);
+  if (btn) btn.classList.add('is-active');
+  // Scroll to top
+  window.scrollTo(0, 0);
+  // Update progress bar color
+  document.documentElement.style.setProperty('--arc-color', arcAccents[arcId] || 'var(--inf)');
+  // Re-init intersection observer after paint
+  setTimeout(initObserver, 300);
+}
+
+// Attach tab button listeners
+(function() {
+  var map = { 'tab-arc1': 'arc1', 'tab-arc2': 'arc2', 'tab-arc3': 'arc3', 'tab-arc4': 'arc4', 'tab-arc5': 'arc5' };
+  Object.keys(map).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('click', function() {
+      // stop epilogue glow once reader opens it
+      if (id === 'tab-arc5') el.classList.remove('arc5-glow');
+      switchArc(map[id]);
+    });
+  });
+})();
+
+/* ══════════════════════════════════════════
+   ARC 5 UNLOCK — reveals tab when a4ep enters viewport
+══════════════════════════════════════════ */
+(function() {
+  var unlocked = false;
+  var trigger = document.getElementById('a4ep');
+  var tab5    = document.getElementById('tab-arc5');
+  var hint    = document.getElementById('arc5-hint');
+  if (!trigger || !tab5) return;
+
+  var unlockObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting && !unlocked) {
+        unlocked = true;
+        // 1. show the tab button with fade-in
+        tab5.style.display = '';
+        // force reflow so transition fires
+        tab5.getBoundingClientRect();
+        tab5.style.opacity = '1';
+        // 2. show hint text inside a4ep
+        if (hint) {
+          hint.style.display = 'block';
+        }
+        // 3. add persistent glow animation to draw attention (stays on)
+        tab5.classList.add('arc5-glow');
+        unlockObs.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  unlockObs.observe(trigger);
+})();
+
+/* ══════════════════════════════════════════
+   STARFIELD
+══════════════════════════════════════════ */
+(function() {
+  var canvas = document.getElementById('starfield');
+  var ctx = canvas.getContext('2d');
+  var stars = [];
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  function initStars() {
+    stars = [];
+    var n = Math.floor(canvas.width * canvas.height / 3200);
+    for (var i = 0; i < n; i++) stars.push({
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      r: Math.random() * 1.4 + .2, a: Math.random(),
+      sp: Math.random() * .003 + .001, ph: Math.random() * Math.PI * 2,
+      c: Math.random() < .08 ? '#aa88ff' : Math.random() < .04 ? '#88ffcc' : '#ffffff'
+    });
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var t = Date.now() * .001;
+    stars.forEach(function(s) {
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.c;
+      ctx.globalAlpha = s.a * (.5 + .5 * Math.sin(t * s.sp * 10 + s.ph));
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  resize(); initStars(); draw();
+  window.addEventListener('resize', function() { resize(); initStars(); });
+})();
+
+/* ══════════════════════════════════════════
+   FLOATING NUMBERS
+══════════════════════════════════════════ */
+(function() {
+  var c = document.getElementById('dim-numbers');
+  var cols = ['var(--d1)', 'var(--d2)', 'var(--d3)', 'var(--d4)', 'var(--amb)', 'var(--inf)', 'var(--eter)', 'var(--real)', 'var(--cel)'];
+  var tmpl = [
+    function() { return (Math.random() * 1e5 | 0).toLocaleString(); },
+    function() { return '×' + Math.pow(2, Math.random() * 20 | 0); },
+    function() { return 'e+' + (Math.random() * 300 | 0); },
+    function() { return (Math.random() * 8 | 0 + 1) + 'th DIM'; },
+    function() { return 'INF-' + (Math.random() * 8 | 0 + 1); },
+    function() { return (Math.random() * 1000 | 0) + ' IP/s'; },
+    function() { return '∞'; },
+    function() { return '⟳'; },
+    function() { return '◈'; },
+    function() { return 'EP:' + (Math.random() * 9999 | 0); },
+    function() { return 'RP:' + (Math.random() * 99 | 0); },
+    function() { return '★'; }
+  ];
+  for (var i = 0; i < 55; i++) {
+    var el = document.createElement('div');
+    el.className = 'fnum';
+    el.textContent = tmpl[Math.floor(Math.random() * tmpl.length)]();
+    var col = cols[Math.floor(Math.random() * cols.length)];
+    var dur = (14 + Math.random() * 24).toFixed(1);
+    var del = (Math.random() * 28).toFixed(1);
+    var x = (Math.random() * 96).toFixed(1);
+    var drift = ((Math.random() - .5) * 160).toFixed(0);
+    el.style.cssText = 'left:' + x + '%;--col:' + col + ';--dur:' + dur + 's;--del:-' + del + 's;--sx:0px;--ex:' + drift + 'px;';
+    c.appendChild(el);
+  }
+})();
+
+/* ══════════════════════════════════════════
+   SCROLL PROGRESS
+══════════════════════════════════════════ */
+window.addEventListener('scroll', function() {
+  var s = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  document.getElementById('prog-bar').style.width = Math.min(100, window.scrollY / s * 100) + '%';
+}, { passive: true });
+
+/* ══════════════════════════════════════════
+   CHAPTER REVEAL (INTERSECTION OBSERVER)
+══════════════════════════════════════════ */
+var observer = null;
+function initObserver() {
+  if (observer) observer.disconnect();
+  observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: .05, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.arc-panel.is-active .chapter').forEach(function(el) {
+    el.classList.remove('vis');
+    observer.observe(el);
+  });
+}
+initObserver();
+
+/* ══════════════════════════════════════════
+   COUNTERS
+══════════════════════════════════════════ */
+(function() {
+  // IP counter
+  var ip = document.getElementById('ip-c');
+  if (ip) {
+    var ipv = ['1', '47', '1.38e4', '2.71e12', '9.99e308', '∞'];
+    var ii = 0;
+    setInterval(function() { ii = (ii + 1) % ipv.length; ip.textContent = ipv[ii]; }, 2500);
+  }
+  // EP counter
+  var ep = document.getElementById('ep-c');
+  if (ep) {
+    var epv = ['1', '12', '144', '1,728', '∞'];
+    var ei = 0;
+    setInterval(function() { ei = (ei + 1) % epv.length; ep.textContent = epv[ei]; }, 2000);
+  }
+  // Eternity count in epilogue
+  var ec = document.getElementById('ec');
+  if (ec) {
+    var n = 1;
+    setInterval(function() {
+      n = Math.floor(n * (1 + Math.random() * .3) + 1);
+      ec.textContent = n > 1e6 ? '∞' : n.toLocaleString();
+    }, 1800);
+  }
+})();
+</script>
+</body>
+</html>
