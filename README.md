@@ -22,10 +22,10 @@ It reimagines the browser/mobile idle game *Antimatter Dimensions* as a piece of
 
 | Arc | Title (EN) | タイトル (JA) | Game Elements |
 |-----|-----------|--------------|---------------|
-| I | First Infinity | 最初の無限 | Dimensions 1–8, Tickspeed, Dimensional Sacrifice |
-| II | Eternity | 永劫回帰 | Infinity Points, Replicanti, Infinity Dimensions, Eternity |
-| III | Reality | 現実機械 | Reality Machine, Glyphs, Perks, Black Hole |
-| IV | Celestials | 星神たちの審判 | Teresa, Effarig, The Nameless Ones, V, Ra, Lai'tela, Pelle |
+| I | Into the Antimatter Abyss | 反物質の深淵へ | Dimensions 1–8, Tickspeed, Dimensional Sacrifice |
+| II | The Prison Called Eternity | 永遠という名の牢獄 | Infinity Points, Replicanti, Infinity Dimensions, Eternity |
+| III | The Dismantling of Reality | 現実という幻想の解体 | Reality Machine, Glyphs, Perks, Black Hole |
+| IV | The Judgment of the Celestials | 星神たちの審判 | Teresa, Effarig, The Nameless Ones, V, Ra, Lai'tela, Pelle |
 
 The story follows **Haruka Mishima**, a researcher who discovers that the antimatter her facility is generating is not being created — it is being *extracted* from somewhere else.
 
